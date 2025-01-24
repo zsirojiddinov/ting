@@ -6,6 +6,7 @@ import 'package:ting/utils/dimens.dart';
 
 import '../../bloc/aggregate/aggregate_bloc.dart';
 import '../../bloc/aggregate/aggregate_state.dart';
+import '../../style/colors.dart';
 
 class AggregatePage extends StatefulWidget {
   const AggregatePage({super.key});
@@ -35,7 +36,9 @@ class _AggregatePageState extends State<AggregatePage> {
             appBar: AppBar(
               title: Text(
                 "Agregatsiya",
-                style: textStyle.titleStyle,
+                style: textStyle.titleStyle.copyWith(
+                  color: MyColor.white,
+                ),
               ),
             ),
             body: Container(

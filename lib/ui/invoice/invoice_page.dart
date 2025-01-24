@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:ting/style/colors.dart';
 import 'package:ting/style/text_style.dart';
 import 'package:ting/ui/widget/custom_alert_dialog.dart';
 import 'package:ting/utils/dimens.dart';
@@ -35,7 +36,9 @@ class _InvoicePageState extends State<InvoicePage> {
             appBar: AppBar(
               title: Text(
                 "Invoice",
-                style: textStyle.titleStyle,
+                style: textStyle.titleStyle.copyWith(
+                  color: MyColor.white,
+                ),
               ),
             ),
             body: Container(
