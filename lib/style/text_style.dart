@@ -46,15 +46,6 @@ class AppStyle {
     );
   }
 
-  TextStyle get gowNumber {
-    return TextStyle(
-      fontSize: dimens.fontGowNumber,
-      color: MyColor.black,
-      fontFamily: "Fe-Font",
-      decoration: TextDecoration.none,
-    );
-  }
-
   TextStyle get hintStyle {
     return GoogleFonts.lateef(
       fontSize: dimens.font12,

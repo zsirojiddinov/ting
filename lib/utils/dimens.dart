@@ -79,27 +79,23 @@ class Dimens {
   }
 
   double get font16 {
-    return width10 * 1.6;
+    return width20 * 1.6;
   }
 
   double get font18 {
-    return width10 * 1.8;
+    return width20 * 1.8;
   }
 
   double get font20 {
-    return width20;
+    return width20 * 2;
   }
 
   double get font24 {
-    return width10 * 2.4;
+    return width20 * 2.4;
   }
 
   double get font30 {
-    return height30;
-  }
-
-  double get fontGowNumber {
-    return height10 * 3.2;
+    return width20 * 3;
   }
 
   double get radius10 {

@@ -24,6 +24,9 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
   }
 
   FutureOr<void> login(SigninEvent event, Emitter<LoginState> emit) async {
+    Get.offAll(HomePage());
+    return;
+
     var login = loginController.text;
 
     if (login.length < 6) {
