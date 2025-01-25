@@ -121,15 +121,15 @@ class Dimens {
   // icons size
 
   double get iconSize24 {
-    return height10 * 2.4;
+    return width20 * 2.4;
   }
 
   double get iconSize20 {
-    return height20;
+    return width20 * 2;
   }
 
   double get iconSize16 {
-    return height10 * 1.6;
+    return width20 * 1.6;
   }
 
   double get line_size {

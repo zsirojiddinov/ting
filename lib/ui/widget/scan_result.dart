@@ -2,9 +2,10 @@ import 'package:barcode_newland_flutter/newland_scan_result.dart';
 import 'package:flutter/material.dart';
 import 'package:ting/style/text_style.dart';
 
-scan_result(
+Widget scanner_result(
   Stream<NewlandScanResult> stream,
   AppStyle textStyle,
+  OnScannerResult listener,
 ) {
   return Center(
     child: StreamBuilder<NewlandScanResult>(
@@ -12,14 +13,16 @@ scan_result(
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             final data = snapshot.data!;
-
-            return Text(
-              'Scanned barcode: ${data.barcodeData}',
-              style: textStyle.titleStyle,
-            );
+            print('Scanned barcode: ${data.barcodeData}');
+          //  listener.result(data);
+            return Container();
           }
 
-          return const Text('Waiting for Data');
+          return Container();
         }),
   );
+}
+
+abstract class OnScannerResult {
+  result(NewlandScanResult result);
 }
