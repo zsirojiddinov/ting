@@ -1,37 +1,47 @@
 import 'dart:async';
+import 'dart:convert';
 
-import 'package:barcode_newland_flutter/newland_scan_result.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:ting/ui/widget/scan_result.dart';
+import 'package:ting/model/base_model.dart';
+import 'package:ting/model/util_aggregate_response.dart';
+import 'package:ting/model/utilization_aggregation_request.dart';
+import 'package:ting/utils/constanta.dart';
 import 'package:ting/utils/errors.dart';
 
 import '../../model/cis_model.dart';
+import '../../repository/cis_repository.dart';
 import 'aggregate_event.dart';
 import 'aggregate_state.dart';
 
-class AggregateBloc extends Bloc<AggregateEvent, AggregateState>
-    implements OnScannerResult {
+class AggregateBloc extends Bloc<AggregateEvent, AggregateState> {
   bool get isHasGroupData {
     return groupModel.code != "";
   }
 
+  String get showText {
+    if (!isHasGroupData) {
+      return "Qutini scaner qiling!";
+    }
+
+    if (cisFullLenght != groupModel.packageCount)
+      return "Maxsulotni scaner qiling!";
+
+    return "123";
+  }
+
+  int get cisFullLenght {
+    return cisList.length;
+  }
+
   var groupModel = CisModel();
-  var listCis = <CisModel>[
-    CisModel(),
-    CisModel(),
-    CisModel(),
-    CisModel(),
-    CisModel(),
-    CisModel(),
-    CisModel(),
-    CisModel(),
-    CisModel(),
-    CisModel(),
-  ];
+  var cisList = <CisModel>[];
+
+  var utilAggr = UtilAggregateResponse();
 
   AggregateBloc() : super(SuccessState()) {
     on<SettingsEvent>(settings);
-    on<AddBarcodeEvent>(addBarcode);
+    on<AddBarcodeEvent>(addEvent);
+    on<CheckingUtillAggregateEvent>(checkingUtilAggregate);
   }
 
   FutureOr<void> settings(
@@ -40,51 +50,150 @@ class AggregateBloc extends Bloc<AggregateEvent, AggregateState>
     return;
   }
 
-  FutureOr<void> addBarcode(
-      AddBarcodeEvent event, Emitter<AggregateState> emit) async {
-    print("result");
-    print(event.data.barcodeData);
-    print(event.data.barcodeType);
-
-    if (groupModel.code == "") {
-      groupModel.code = event.data.barcodeData;
+  FutureOr<void> checkingUtilAggregate(
+      CheckingUtillAggregateEvent event, Emitter<AggregateState> emit) async {
+    CisRepository repository = CisRepository();
+    emit(ProgressState());
+    var baseModel =
+        await repository.checkingAggregation(utilAggr.utilId.toString());
+    if (baseModel.code == 200) {
+      utilAggr = baseModel.response as UtilAggregateResponse;
       emit(SuccessState());
       return;
+    } else {
+      emit(ErrorState(failure: ServerFailure(message: baseModel.message)));
     }
-
-    for (var item in listCis) {
-      if (item.code == "") {
-        item.code = event.data.barcodeData;
-        emit(SuccessState());
-        return;
-      }
-    }
-
-    emit(ErrorState(failure: ServerFailure(message: "scaner tugatilsin")));
   }
 
-  @override
-  result(NewlandScanResult result) {
-    print("result");
-    print(result.barcodeData);
-    print(result.barcodeType);
-
+  addEvent(AddBarcodeEvent event, Emitter<AggregateState> emit) async {
+    print("listen addEvent: ${event.data.barcodeData}");
+    // check group
     if (groupModel.code == "") {
-      groupModel.code = result.barcodeData;
-      emit(SuccessState());
-      return;
-    }
+      emit(ProgressState());
+      BaseModel baseModel = await checkStatus(event.data.barcodeData);
+      print("listen baseModel.code: ${baseModel.code}");
+      print("listen baseModel.message: ${baseModel.message}");
 
-    for (var item in listCis) {
-      if (item.code == "") {
-        item.code == result.barcodeData;
+      baseModel.code = 200;
+      baseModel.response = CisModel(
+        accept: true,
+        code: event.data.barcodeData,
+        packageCount: 15,
+        packageType: IConstanta.GROUP,
+      );
+      if (baseModel.code != 200) {
+        emit(ErrorState(failure: ServerFailure(message: baseModel.message!)));
+        return;
+      }
+      var cisModel = baseModel.response as CisModel;
+      if (cisModel.packageType == IConstanta.GROUP) {
+        groupModel = cisModel;
         emit(SuccessState());
+        //   await createCisList();
+        //    emit(SuccessState());
+        return;
+      } else {
+        emit(ErrorState(failure: NotGroupCodeFailure()));
         return;
       }
     }
 
-    emit(ErrorState(failure: ServerFailure(message: "scaner tugatilsin")));
+    // check cis
 
-    // if(result.barcodeData.startsWith(0))
+    if (cisList.length == groupModel.packageCount) {
+      emit(ErrorState(
+          failure: ServerFailure(message: "qrcode scaner qilib bo'lmaydi")));
+      return;
+    }
+
+    var isUnical = isUnitUnical(event.data.barcodeData);
+    if (!isUnical) {
+      emit(ErrorState(failure: ServerFailure(message: "takroriy qrcode")));
+      return;
+    }
+
+    emit(ProgressState());
+    BaseModel baseModel = await checkStatus(event.data.barcodeData);
+    print("listen baseModel.code: ${baseModel.code}");
+    print("listen baseModel.message: ${baseModel.message}");
+
+    baseModel.code = 200;
+    baseModel.response = CisModel(
+      accept: true,
+      code: event.data.barcodeData,
+      packageCount: 0,
+      packageType: IConstanta.UNIT,
+    );
+
+    if (baseModel.code != 200) {
+      emit(ErrorState(failure: ServerFailure(message: baseModel.message!)));
+      return;
+    }
+
+    var cisModel = baseModel.response as CisModel;
+
+    if (cisModel.packageType == IConstanta.GROUP) {
+      emit(ErrorState(failure: NotUnitCodeFailure()));
+      return;
+    }
+
+    if (!isUnitUnical(event.data.barcodeData)) {
+      emit(ErrorState(failure: ServerFailure(message: "takroriy qrcode")));
+      return;
+    }
+    cisList.add(cisModel);
+    emit(SuccessState());
+
+    for (var item in cisList) {
+      print(json.encode(item.toJson()));
+    }
+    if (cisList.length == groupModel.packageCount) {
+      emit(ProgressState());
+      var baseSend = await send();
+      if (baseSend.code == 200) {
+        utilAggr = baseSend.response as UtilAggregateResponse;
+        emit(SuccessState());
+        return;
+      }
+      emit(ErrorState(failure: ServerFailure(message: baseSend.message)));
+      return;
+    }
+  }
+
+  bool get idFullCisList {
+    return cisList.length == groupModel.packageCount;
+  }
+
+  checkStatus(String barcode) async {
+    var repository = CisRepository();
+    print("listen checkStatus $barcode");
+    var baseModel = await repository.cisStatus(barcode);
+    return baseModel;
+  }
+
+  bool isUnitUnical(String code) {
+    for (var item in cisList) {
+      if (item.code == code) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  Future<BaseModel> send() async {
+    CisRepository repository = CisRepository();
+    var request = UtilizationAggregationRequest();
+    request.groupCis = groupModel.code;
+    request.unitCis = getCisList();
+    var baseModel = await repository.sendUtilAggregation(request);
+    return baseModel;
+  }
+
+  List<String> getCisList() {
+    var list = <String>[];
+    for (var item in cisList) {
+      list.add(item.code!);
+    }
+    return list;
   }
 }

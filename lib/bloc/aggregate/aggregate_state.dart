@@ -16,3 +16,11 @@ class ErrorState extends AggregateState {
     required this.failure,
   });
 }
+
+/*class AggregateErrorState extends AggregateState {
+  String message;
+
+  AggregateErrorState({
+    required this.message,
+  });
+}*/

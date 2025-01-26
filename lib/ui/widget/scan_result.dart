@@ -5,7 +5,6 @@ import 'package:ting/style/text_style.dart';
 Widget scanner_result(
   Stream<NewlandScanResult> stream,
   AppStyle textStyle,
-  OnScannerResult listener,
 ) {
   return Center(
     child: StreamBuilder<NewlandScanResult>(
@@ -23,6 +22,8 @@ Widget scanner_result(
   );
 }
 
+/*
 abstract class OnScannerResult {
   result(NewlandScanResult result);
 }
+*/

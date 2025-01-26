@@ -28,6 +28,21 @@ class InputPasswordFailure extends Failure {
       "input_password_errors";
 }
 
+class NotGroupCodeFailure extends Failure {
+  NotGroupCodeFailure() : super();
+
+  @override
+  String getLocalizedMessage(BuildContext context) =>
+      "Siz urgan qrcode group emas, iltimos qaytadan urinib ko'ring";
+}
+
+class NotUnitCodeFailure extends Failure {
+  NotUnitCodeFailure() : super();
+
+  @override
+  String getLocalizedMessage(BuildContext context) =>
+      "Siz urgan qrcode unit emas, iltimos qaytadan urinib ko'ring";
+}
 
 // ignore: must_be_immutable
 class ServerFailure extends Failure {

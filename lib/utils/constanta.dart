@@ -8,4 +8,6 @@ class IConstanta {
   static const String FULL_NAME = "myFullName";
   static const String PASSWORD = "myPassword";
   static const String LOGIN = "myLogin";
+  static const String GROUP = "GROUP";
+  static const String UNIT = "UNIT";
 }

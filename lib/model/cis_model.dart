@@ -1,5 +1,5 @@
 class CisModel {
-  int? packageCount;
+  int packageCount;
   String? packageType;
   String? code;
   bool? accept;

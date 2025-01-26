@@ -140,6 +140,9 @@ class ApiService {
       if (e.response?.statusCode == 401) {
         return e.response;
       }
+      if (e.response?.statusCode == 400) {
+        return e.response;
+      }
       if (e.response?.statusCode == 404) {
         return e.response;
       }

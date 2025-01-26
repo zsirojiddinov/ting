@@ -70,17 +70,11 @@ newEditRedDecoration(Dimens dimens) {
 
 colorDecoration(
   Dimens dimens, {
-  bool isRed = true,
-  bool isBlue = false,
+  bool isActive = false,
 }) {
   return BoxDecoration(
-    color: isBlue ? MyColor.bottom_blue_color : MyColor.red_color,
+    color: isActive ? MyColor.green_color : MyColor.greys,
     borderRadius: BorderRadius.circular(dimens.height10),
-    /*   border: Border.all(
-      color: MyColor.line_color,
-      width: dimens.width10 / 20,
-    ),*/
-    // boxShadow: myShadow(dimens),
   );
 }
 

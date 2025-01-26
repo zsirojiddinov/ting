@@ -1,27 +1,27 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
-import 'package:gap/gap.dart';
 
 import '../../../style/colors.dart';
 import '../../../style/text_style.dart';
 import '../../../utils/dimens.dart';
-import '../../../utils/resource.dart';
 
-void showMessage(
+showMessage(
   context,
   String message,
 ) {
   var dimens = Dimens(context);
   var textStyle = AppStyle(context);
+  ScaffoldMessenger.of(context).clearSnackBars();
+  ScaffoldMessenger.of(context).hideCurrentSnackBar();
+
   ScaffoldMessenger.of(context).showSnackBar(
     SnackBar(
       content: Row(
         children: [
-          SvgPicture.asset(
+          /*         SvgPicture.asset(
             Resource.NEW_IC_INFO2,
             color: MyColor.red_color,
           ),
-          Gap(dimens.paddingItems),
+          Gap(dimens.paddingItems),*/
           Expanded(
             child: Text(
               message,
