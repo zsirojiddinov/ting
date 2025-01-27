@@ -44,10 +44,26 @@ class AggregateBloc extends Bloc<AggregateEvent, AggregateState> {
     on<CheckingUtillAggregateEvent>(checkingUtilAggregate);
   }
 
+  bool _isButtonEnabled = true;
+  int _secondsLeft = 10;
+  Timer? _timer;
+
   FutureOr<void> settings(
       SettingsEvent event, Emitter<AggregateState> emit) async {
-    // Get.to(() => ProfilePage());
-    return;
+    _isButtonEnabled = false;
+    _secondsLeft = 10;
+    emit(SuccessState());
+
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (_secondsLeft > 1) {
+        _secondsLeft--;
+        emit(SuccessState());
+      } else {
+        _isButtonEnabled = true;
+        _timer?.cancel();
+        emit(SuccessState());
+      }
+    });
   }
 
   FutureOr<void> checkingUtilAggregate(
@@ -73,14 +89,14 @@ class AggregateBloc extends Bloc<AggregateEvent, AggregateState> {
       BaseModel baseModel = await checkStatus(event.data.barcodeData);
       print("listen baseModel.code: ${baseModel.code}");
       print("listen baseModel.message: ${baseModel.message}");
-
+/*
       baseModel.code = 200;
       baseModel.response = CisModel(
         accept: true,
         code: event.data.barcodeData,
         packageCount: 15,
         packageType: IConstanta.GROUP,
-      );
+      );*/
       if (baseModel.code != 200) {
         emit(ErrorState(failure: ServerFailure(message: baseModel.message!)));
         return;
@@ -88,6 +104,7 @@ class AggregateBloc extends Bloc<AggregateEvent, AggregateState> {
       var cisModel = baseModel.response as CisModel;
       if (cisModel.packageType == IConstanta.GROUP) {
         groupModel = cisModel;
+        groupModel.code = event.data.barcodeData;
         emit(SuccessState());
         //   await createCisList();
         //    emit(SuccessState());
@@ -117,13 +134,13 @@ class AggregateBloc extends Bloc<AggregateEvent, AggregateState> {
     print("listen baseModel.code: ${baseModel.code}");
     print("listen baseModel.message: ${baseModel.message}");
 
-    baseModel.code = 200;
+/*    baseModel.code = 200;
     baseModel.response = CisModel(
       accept: true,
       code: event.data.barcodeData,
       packageCount: 0,
       packageType: IConstanta.UNIT,
-    );
+    );*/
 
     if (baseModel.code != 200) {
       emit(ErrorState(failure: ServerFailure(message: baseModel.message!)));
@@ -141,6 +158,8 @@ class AggregateBloc extends Bloc<AggregateEvent, AggregateState> {
       emit(ErrorState(failure: ServerFailure(message: "takroriy qrcode")));
       return;
     }
+
+    cisModel.code = event.data.barcodeData;
     cisList.add(cisModel);
     emit(SuccessState());
 

@@ -42,8 +42,9 @@ class CisRepository {
           response: CisModel.fromJson(response?.data['response']),
         );
       } else {
+        print(response?.data['result']);
         return BaseModel(
-          code: response?.data['result'],
+          code: 1,
           message: response?.data['result_message'],
         );
       }

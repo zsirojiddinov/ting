@@ -9,7 +9,7 @@ final BaseModel SERVER_NOT_WORKING = BaseModel(
 );
 
 basicToken() async {
-  var baseRes = "BUNYOD:BUNYOD";
+  var baseRes = "Ziyoviddin:12345";
   Codec<String, String> stringToBase64 = utf8.fuse(base64);
   String encoded = stringToBase64.encode(baseRes);
 
