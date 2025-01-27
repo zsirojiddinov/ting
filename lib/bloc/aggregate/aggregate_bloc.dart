@@ -23,8 +23,9 @@ class AggregateBloc extends Bloc<AggregateEvent, AggregateState> {
       return "Qutini scaner qiling!";
     }
 
-    if (cisFullLenght != groupModel.packageCount)
+    if (cisFullLenght != groupModel.packageCount) {
       return "Maxsulotni scaner qiling!";
+    }
 
     return "123";
   }
