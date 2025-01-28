@@ -472,7 +472,7 @@ class NewBirthdayWidget2 extends StatelessWidget {
         Container(
           decoration: isActive
               ? newEditDecoration(dimens)
-              : newEditDecorationNotActive(dimens),
+              : decorationWithStatus(dimens),
           padding: EdgeInsets.only(left: dimens.width20),
           //  height: dimens.height20,
           child: Row(

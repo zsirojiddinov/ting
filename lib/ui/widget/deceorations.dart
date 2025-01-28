@@ -149,19 +149,17 @@ selectCompanyDecoration(
   );
 }
 
-newEditDecorationNotActive(
+decorationWithStatus(
   Dimens dimens, {
-  bool withLine = true,
+  int status = 0,
 }) {
   return BoxDecoration(
-    color: MyColor.inactive_bg_color,
+    color: status == 0
+        ? MyColor.greys
+        : status == 1
+            ? Colors.yellowAccent
+            : MyColor.green_color,
     borderRadius: BorderRadius.circular(dimens.radius16),
-    border: withLine
-        ? Border.all(
-            color: MyColor.inactive_line_color,
-            width: dimens.line_size,
-          )
-        : null,
   );
 }
 
