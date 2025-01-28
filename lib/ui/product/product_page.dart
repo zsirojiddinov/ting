@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ting/bloc/product/product_state.dart';
 import 'package:ting/model/invoice/invoice_model.dart';
+import 'package:ting/model/invoice/product_model.dart';
 import 'package:ting/style/colors.dart';
 import 'package:ting/style/text_style.dart';
 import 'package:ting/ui/widget/custom_alert_dialog.dart';
@@ -10,6 +11,7 @@ import 'package:ting/utils/dimens.dart';
 
 import '../../bloc/product/product_bloc.dart';
 import '../../bloc/product/product_event.dart';
+import '../widget/deceorations.dart';
 
 class ProductPage extends StatefulWidget {
   InvoiceModel model;
@@ -30,7 +32,10 @@ class _ProductPageState extends State<ProductPage> {
     textStyle = AppStyle(context);
     dimens = Dimens(context);
     return BlocProvider(
-      create: (context) => ProductBloc()..add(GetProductDataEvent()),
+      create: (context) => ProductBloc()
+        ..add(
+          GetProductDataEvent(widget.model),
+        ),
       child: BlocConsumer<ProductBloc, ProductState>(
         listener: (context, state) {
           if (state is ErrorState) {
@@ -61,14 +66,19 @@ class _ProductPageState extends State<ProductPage> {
   }
 
   ui() {
-    return Container(
-      child: Center(
-        child: Text(
-          "product",
-          style: textStyle.text_style,
-        ),
-      ),
-    );
+    return bloc.productModel.id == -1
+        ? Container()
+        : Container(
+            child: ListView.builder(
+              shrinkWrap: true,
+              primary: true,
+              itemCount: bloc.productModel.products!.length,
+              itemBuilder: (context, index) {
+                var model = bloc.productModel.products![index];
+                return item_product(model);
+              },
+            ),
+          );
   }
 
   loading() {
@@ -76,6 +86,45 @@ class _ProductPageState extends State<ProductPage> {
       builder: (context, state) {
         return state is ProgressState ? progressBar(dimens) : Container();
       },
+    );
+  }
+
+  item_product(ProductModel model) {
+    return Container(
+      decoration: decorationWithStatus(dimens, status: 0),
+      padding: EdgeInsets.symmetric(
+        vertical: dimens.height10,
+        horizontal: dimens.width20,
+      ),
+      margin: EdgeInsets.symmetric(
+        vertical: dimens.height10,
+        horizontal: dimens.width20,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  model.productName.toString(),
+                  style: textStyle.text_style,
+                ),
+              ),
+            ],
+          ),
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  "${model.cisCount}/${model.productCount}",
+                  style: textStyle.text_style,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
     );
   }
 }

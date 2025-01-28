@@ -11,6 +11,7 @@ import 'package:ting/utils/dimens.dart';
 import '../../bloc/invoice/invoice_bloc.dart';
 import '../../bloc/invoice/invoice_event.dart';
 import '../../bloc/invoice/invoice_state.dart';
+import '../../utils/function.dart';
 
 class InvoicePage extends StatefulWidget {
   const InvoicePage({super.key});
@@ -85,7 +86,6 @@ class _InvoicePageState extends State<InvoicePage> {
       child: Container(
         decoration: decorationWithStatus(dimens, status: model.status!),
         padding: EdgeInsets.symmetric(
-          vertical: dimens.height10,
           horizontal: dimens.width20,
         ),
         margin: EdgeInsets.symmetric(
@@ -99,8 +99,8 @@ class _InvoicePageState extends State<InvoicePage> {
               children: [
                 Expanded(
                   child: Text(
-                    model.partnerName.toString(),
-                    style: textStyle.titleStyle.copyWith(
+                    "${model.facturaNumber} | ${changeDateFormat(model.facturaDate.toString())}",
+                    style: textStyle.text_style.copyWith(
                       color: model.status == 2
                           ? MyColor.white
                           : MyColor.text_color,
@@ -108,7 +108,7 @@ class _InvoicePageState extends State<InvoicePage> {
                   ),
                 ),
                 Text(
-                  "🆔${model.id.toString()}",
+                  "${model.cisCount}/${model.productCount}",
                   style: textStyle.text_style.copyWith(
                     color:
                         model.status == 2 ? MyColor.white : MyColor.text_color,
@@ -116,29 +116,16 @@ class _InvoicePageState extends State<InvoicePage> {
                 ),
               ],
             ),
-            Text(
-              "${model.facturaNumber}",
-              style: textStyle.text_style.copyWith(
-                color: model.status == 2 ? MyColor.white : MyColor.text_color,
-              ),
-            ),
             Row(
               children: [
                 Expanded(
                   child: Text(
-                    "${model.productCount}/${model.productCount}",
-                    style: textStyle.titleStyle.copyWith(
+                    model.partnerName.toString(),
+                    style: textStyle.text_style.copyWith(
                       color: model.status == 2
                           ? MyColor.white
                           : MyColor.text_color,
                     ),
-                  ),
-                ),
-                Text(
-                  "${model.facturaDate}",
-                  style: textStyle.text_style.copyWith(
-                    color:
-                        model.status == 2 ? MyColor.white : MyColor.text_color,
                   ),
                 ),
               ],

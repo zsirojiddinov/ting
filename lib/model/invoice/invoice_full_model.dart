@@ -9,7 +9,7 @@ class InvoiceFullModel {
   List<ProductModel>? products;
 
   InvoiceFullModel({
-    this.id = 0,
+    this.id = -1,
     this.facturaDate = "",
     this.facturaNumber = "",
     this.status = 0,
