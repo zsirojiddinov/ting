@@ -81,7 +81,6 @@ class _InvoicePageState extends State<InvoicePage> {
   }
 
   item_invoice(InvoiceModel model) {
-    model.status = 0;
     return GestureDetector(
       child: Container(
         decoration: decorationWithStatus(dimens, status: model.status!),

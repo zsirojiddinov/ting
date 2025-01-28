@@ -6,6 +6,7 @@ import 'package:ting/model/invoice/invoice_model.dart';
 import 'package:ting/repository/invoice_repository.dart';
 import 'package:ting/utils/errors.dart';
 
+import '../../ui/product/product_page.dart';
 import 'invoice_event.dart';
 import 'invoice_state.dart';
 
