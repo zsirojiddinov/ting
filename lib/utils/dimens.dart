@@ -4,7 +4,7 @@ class Dimens {
   BuildContext ctx;
   late double screenHeight;
   late double screenWidth;
-  double kf = 0.85;
+  double kf = 0.65;
 
   Dimens(this.ctx) {
     screenHeight = MediaQuery.of(ctx).size.height;

@@ -12,7 +12,7 @@ class AppStyle {
   }
 
   TextStyle get titleStyle {
-    return GoogleFonts.lateef(
+    return GoogleFonts.openSans(
       fontSize: dimens.font20,
       fontWeight: FontWeight.w700,
       color: MyColor.black,
@@ -21,7 +21,7 @@ class AppStyle {
   }
 
   TextStyle get text_style {
-    return GoogleFonts.lateef(
+    return GoogleFonts.openSans(
       fontSize: dimens.font16,
       fontWeight: FontWeight.w400,
       color: MyColor.black,
@@ -30,7 +30,7 @@ class AppStyle {
   }
 
   TextStyle get text_style_bold {
-    return GoogleFonts.lateef(
+    return GoogleFonts.openSans(
       fontSize: dimens.font16,
       fontWeight: FontWeight.w700,
       color: MyColor.black,
@@ -39,7 +39,7 @@ class AppStyle {
   }
 
   TextStyle get text_secondary_style {
-    return GoogleFonts.lateef(
+    return GoogleFonts.openSans(
       fontSize: dimens.font14,
       color: MyColor.text_secondary_color,
       decoration: TextDecoration.none,
@@ -47,7 +47,7 @@ class AppStyle {
   }
 
   TextStyle get hintStyle {
-    return GoogleFonts.lateef(
+    return GoogleFonts.openSans(
       fontSize: dimens.font12,
       fontWeight: FontWeight.normal,
       color: MyColor.hint_color,

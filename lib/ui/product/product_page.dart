@@ -1,18 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:gap/gap.dart';
 import 'package:ting/bloc/product/product_state.dart';
 import 'package:ting/model/invoice/invoice_model.dart';
 import 'package:ting/model/invoice/product_model.dart';
 import 'package:ting/style/colors.dart';
 import 'package:ting/style/text_style.dart';
 import 'package:ting/ui/widget/custom_alert_dialog.dart';
+import 'package:ting/ui/widget/dashed_line.dart';
 import 'package:ting/ui/widget/progressbar.dart';
 import 'package:ting/utils/dimens.dart';
 
 import '../../bloc/product/product_bloc.dart';
 import '../../bloc/product/product_event.dart';
 import '../../utils/function.dart';
-import '../widget/deceorations.dart';
 
 class ProductPage extends StatefulWidget {
   InvoiceModel model;
@@ -48,8 +49,10 @@ class _ProductPageState extends State<ProductPage> {
           return Scaffold(
             appBar: AppBar(
               title: Text(
-                "${widget.model.facturaNumber} | ${changeDateFormat(widget.model.facturaDate.toString())}",
-                style: textStyle.titleStyle.copyWith(color: MyColor.white),
+                "${widget.model.facturaNumber} от ${changeDateFormat(widget.model.facturaDate.toString())}",
+                style: textStyle.titleStyle.copyWith(
+                  color: MyColor.white,
+                ),
               ),
             ),
             body: Stack(
@@ -67,14 +70,19 @@ class _ProductPageState extends State<ProductPage> {
   ui() {
     return bloc.productModel.id == -1
         ? Container()
-        : ListView.builder(
-            shrinkWrap: true,
-            primary: true,
-            itemCount: bloc.productModel.products!.length,
-            itemBuilder: (context, index) {
-              var model = bloc.productModel.products![index];
-              return item_product(model);
-            },
+        : Column(
+            children: [
+              Gap(dimens.height10),
+              ListView.builder(
+                shrinkWrap: true,
+                primary: true,
+                itemCount: bloc.productModel.products!.length,
+                itemBuilder: (context, index) {
+                  var model = bloc.productModel.products![index];
+                  return item_product(model);
+                },
+              ),
+            ],
           );
   }
 
@@ -87,30 +95,29 @@ class _ProductPageState extends State<ProductPage> {
   }
 
   item_product(ProductModel model) {
-    return Container(
-      decoration: decorationWithStatus(dimens, status: 0),
-      padding: EdgeInsets.symmetric(
-        vertical: dimens.height10,
-        horizontal: dimens.width20,
-      ),
-      margin: EdgeInsets.symmetric(
-        vertical: dimens.height10,
-        horizontal: dimens.width20,
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            child: Text(
-              model.productName.toString(),
-              style: textStyle.text_style,
-            ),
+    return Column(
+      children: [
+        Container(
+          padding: EdgeInsets.symmetric(
+            horizontal: dimens.width20,
           ),
-          Text(
-            "${model.cisCount}/${model.productCount}",
-            style: textStyle.text_style,
-          )
-        ],
-      ),
+          child: Row(
+            children: [
+              Expanded(
+                child: Text(
+                  model.productName.toString(),
+                  style: textStyle.text_style,
+                ),
+              ),
+              Text(
+                "${model.cisCount}/${model.productCount}",
+                style: textStyle.text_style,
+              )
+            ],
+          ),
+        ),
+        dashed_line(dimens),
+      ],
     );
   }
 }

@@ -87,6 +87,7 @@ class _InvoicePageState extends State<InvoicePage> {
         decoration: decorationWithStatus(dimens, status: model.status!),
         padding: EdgeInsets.symmetric(
           horizontal: dimens.width20,
+          vertical: dimens.height10,
         ),
         margin: EdgeInsets.symmetric(
           vertical: dimens.height10,
@@ -99,7 +100,7 @@ class _InvoicePageState extends State<InvoicePage> {
               children: [
                 Expanded(
                   child: Text(
-                    "${model.facturaNumber} | ${changeDateFormat(model.facturaDate.toString())}",
+                    "${model.facturaNumber} от ${changeDateFormat(model.facturaDate.toString())}",
                     style: textStyle.text_style.copyWith(
                       color: model.status == 2
                           ? MyColor.white
