@@ -5,4 +5,5 @@ class ApiConstanta {
   static const CIS_STATUS = "api/v1/util-aggr/cis-status";
   static const UTILIZATION_AGGREGATION = "api/v1/util-aggr/utilization-aggregation";
   static const CHECKING_UTILIZATION_AGGREGATION = "api/v1/util-aggr/report-status";
+  static const GET_INVOICE_LIST = "api/v1/factura/list";
 }

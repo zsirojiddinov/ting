@@ -5,3 +5,5 @@ abstract class InvoiceEvent {}
 
 // ignore: must_be_immutable
 class SettingsEvent extends InvoiceEvent {}
+
+class GetInvoiceDataEvent extends InvoiceEvent {}

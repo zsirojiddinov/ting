@@ -1,17 +1,17 @@
-class InvoiceModel {
+class AddCisResponse {
   int productId;
   int? cisCount;
   int? facturaStatus;
 
 
-  InvoiceModel({
+  AddCisResponse({
     this.productId = 0,
     this.cisCount = 0,
     this.facturaStatus = 0,
   });
 
-  factory InvoiceModel.fromJson(Map<String, dynamic> json) {
-    return InvoiceModel(
+  factory AddCisResponse.fromJson(Map<String, dynamic> json) {
+    return AddCisResponse(
       productId: json['productId'] ?? 0,
       cisCount: json['cisCount'] ?? 0,
       facturaStatus: json['facturaStatus'] ?? 0,

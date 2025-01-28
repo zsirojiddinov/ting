@@ -3,9 +3,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ting/style/colors.dart';
 import 'package:ting/style/text_style.dart';
 import 'package:ting/ui/widget/custom_alert_dialog.dart';
+import 'package:ting/ui/widget/progressbar.dart';
 import 'package:ting/utils/dimens.dart';
 
 import '../../bloc/invoice/invoice_bloc.dart';
+import '../../bloc/invoice/invoice_event.dart';
 import '../../bloc/invoice/invoice_state.dart';
 
 class InvoicePage extends StatefulWidget {
@@ -24,7 +26,7 @@ class _InvoicePageState extends State<InvoicePage> {
     textStyle = AppStyle(context);
     dimens = Dimens(context);
     return BlocProvider(
-      create: (context) => InvoiceBloc(),
+      create: (context) => InvoiceBloc()..add(GetInvoiceDataEvent()),
       child: BlocConsumer<InvoiceBloc, InvoiceState>(
         listener: (context, state) {
           if (state is ErrorState) {
@@ -41,17 +43,34 @@ class _InvoicePageState extends State<InvoicePage> {
                 ),
               ),
             ),
-            body: Container(
-              child: Center(
-                child: Text(
-                  "Invoice",
-                  style: textStyle.text_style,
-                ),
-              ),
+            body: Stack(
+              children: [
+                ui(),
+                loading(),
+              ],
             ),
           );
         },
       ),
+    );
+  }
+
+  ui() {
+    return Container(
+      child: Center(
+        child: Text(
+          "Invoice",
+          style: textStyle.text_style,
+        ),
+      ),
+    );
+  }
+
+  loading() {
+    return BlocBuilder<InvoiceBloc, InvoiceState>(
+      builder: (context, state) {
+        return state is ProgressState ? progressBar(dimens) : Container();
+      },
     );
   }
 }

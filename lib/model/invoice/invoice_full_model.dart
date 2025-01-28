@@ -1,6 +1,6 @@
 import 'package:ting/model/invoice/product_model.dart';
 
-class InvoiceModel {
+class InvoiceFullModel {
   int id;
   String? facturaNumber;
   String? facturaDate;
@@ -8,7 +8,7 @@ class InvoiceModel {
   String? partnerName;
   List<ProductModel>? products;
 
-  InvoiceModel({
+  InvoiceFullModel({
     this.id = 0,
     this.facturaDate = "",
     this.facturaNumber = "",
@@ -17,8 +17,8 @@ class InvoiceModel {
     this.products,
   });
 
-  factory InvoiceModel.fromJson(Map<String, dynamic> json) {
-    return InvoiceModel(
+  factory InvoiceFullModel.fromJson(Map<String, dynamic> json) {
+    return InvoiceFullModel(
       id: json['id'] ?? 0,
       facturaDate: json['facturaDate'] ?? "",
       facturaNumber: json['facturaNumber'] ?? "",
