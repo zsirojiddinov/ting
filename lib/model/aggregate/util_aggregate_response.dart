@@ -1,4 +1,4 @@
-import 'package:ting/model/status_model.dart';
+import 'package:ting/model/aggregate/status_model.dart';
 
 class UtilAggregateResponse {
   int utilId;

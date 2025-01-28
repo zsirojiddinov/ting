@@ -6,7 +6,7 @@ import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
-import 'package:ting/model/cis_model.dart';
+import 'package:ting/model/aggregate/cis_model.dart';
 import 'package:ting/style/text_style.dart';
 import 'package:ting/ui/widget/buttons.dart';
 import 'package:ting/ui/widget/custom_alert_dialog.dart';

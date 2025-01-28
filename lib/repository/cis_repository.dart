@@ -1,9 +1,9 @@
 import 'package:dio/dio.dart';
-import 'package:ting/model/cis_model.dart';
+import 'package:ting/model/aggregate/cis_model.dart';
 
 import '../model/base_model.dart';
-import '../model/util_aggregate_response.dart';
-import '../model/utilization_aggregation_request.dart';
+import '../model/aggregate/util_aggregate_response.dart';
+import '../model/aggregate/utilization_aggregation_request.dart';
 import '../services/api_constanta.dart';
 import '../services/api_service.dart';
 import '../services/preference_service.dart';

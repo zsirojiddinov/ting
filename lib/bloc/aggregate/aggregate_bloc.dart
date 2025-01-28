@@ -3,13 +3,13 @@ import 'dart:convert';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ting/model/base_model.dart';
-import 'package:ting/model/status_model.dart';
-import 'package:ting/model/util_aggregate_response.dart';
-import 'package:ting/model/utilization_aggregation_request.dart';
+import 'package:ting/model/aggregate/status_model.dart';
+import 'package:ting/model/aggregate/util_aggregate_response.dart';
+import 'package:ting/model/aggregate/utilization_aggregation_request.dart';
 import 'package:ting/utils/constanta.dart';
 import 'package:ting/utils/errors.dart';
 
-import '../../model/cis_model.dart';
+import '../../model/aggregate/cis_model.dart';
 import '../../repository/cis_repository.dart';
 import 'aggregate_event.dart';
 import 'aggregate_state.dart';
