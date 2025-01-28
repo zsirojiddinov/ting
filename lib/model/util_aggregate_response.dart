@@ -1,19 +1,25 @@
+import 'package:ting/model/status_model.dart';
+
 class UtilAggregateResponse {
   int utilId;
-  String? utilStatus;
-  String? aggStatus;
+  StatusModel? utilStatus;
+  StatusModel? aggStatus;
 
   UtilAggregateResponse({
     this.utilId = 0,
-    this.aggStatus = "",
-    this.utilStatus = "",
+    this.aggStatus,
+    this.utilStatus,
   });
 
   factory UtilAggregateResponse.fromJson(Map<String, dynamic> json) {
     return UtilAggregateResponse(
       utilId: json['utilId'] ?? 0,
-      aggStatus: json['aggStatus'] ?? "",
-      utilStatus: json['utilStatus'] ?? "",
+      aggStatus: json['aggStatus'] == null
+          ? StatusModel()
+          : StatusModel.fromJson(json['aggStatus']),
+      utilStatus: json['utilStatus'] == null
+          ? StatusModel()
+          : StatusModel.fromJson(json['utilStatus']),
     );
   }
 
@@ -22,7 +28,6 @@ class UtilAggregateResponse {
     data['utilId'] = utilId;
     data['aggStatus'] = aggStatus;
     data['utilStatus'] = utilStatus;
-
     return data;
   }
 }

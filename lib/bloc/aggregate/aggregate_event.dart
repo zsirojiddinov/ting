@@ -9,6 +9,7 @@ class SettingsEvent extends AggregateEvent {}
 
 class InitializationEvent extends AggregateEvent {}
 class CheckingUtillAggregateEvent extends AggregateEvent {}
+class SendUtilizationEvent extends AggregateEvent {}
 
 class AddBarcodeEvent extends AggregateEvent {
   NewlandScanResult data;

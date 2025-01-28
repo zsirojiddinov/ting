@@ -57,8 +57,8 @@ class _AggregatePageState extends State<AggregatePage> {
           bloc = BlocProvider.of<AggregateBloc>(context);
 
           _subscription = _stream.listen((data) {
-            bloc.add(AddBarcodeEvent(data));
             _subscription.cancel();
+            bloc.add(AddBarcodeEvent(data));
           });
           return Scaffold(
               appBar: AppBar(
@@ -103,6 +103,15 @@ class _AggregatePageState extends State<AggregatePage> {
                 ? Container(
                     child: Column(
                       children: [
+                        bloc.groupModel.packageCount == bloc.cisList.length &&
+                                bloc.utilAggr.utilId == 0
+                            ? WhiteBtn(
+                                text: "Utilizatsiyaga junatish",
+                                onClick: () {
+                                  bloc.add(SendUtilizationEvent());
+                                },
+                              )
+                            : Container(),
                         Container(
                           decoration: newDecoration(dimens),
                           alignment: Alignment.center,
@@ -114,9 +123,22 @@ class _AggregatePageState extends State<AggregatePage> {
                           margin: EdgeInsets.symmetric(
                             vertical: dimens.height10,
                           ),
-                          child: Text(
-                            "Utilization ${bloc.utilAggr.utilStatus}",
-                            style: textStyle.text_style,
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  "Utilization ${bloc.utilAggr.utilStatus?.name}",
+                                  style: textStyle.text_style,
+                                ),
+                              ),
+                              Gap(dimens.width20),
+                              CircleAvatar(
+                                backgroundColor: parseColor(
+                                  bloc.utilAggr.utilStatus!.color!,
+                                ),
+                                radius: dimens.height20,
+                              ),
+                            ],
                           ),
                         ),
                         Container(
@@ -130,16 +152,33 @@ class _AggregatePageState extends State<AggregatePage> {
                           margin: EdgeInsets.symmetric(
                             vertical: dimens.height10,
                           ),
-                          child: Text(
-                            "Aggregation ${bloc.utilAggr.aggStatus}",
-                            style: textStyle.text_style,
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  "Aggregation ${bloc.utilAggr.aggStatus?.name}",
+                                  style: textStyle.text_style,
+                                ),
+                              ),
+                              Gap(dimens.width20),
+                              CircleAvatar(
+                                backgroundColor: parseColor(
+                                  bloc.utilAggr.utilStatus!.color!,
+                                ),
+                                radius: dimens.height20,
+                              ),
+                            ],
                           ),
                         ),
                         Gap(dimens.height45 * 2),
-                        WhiteBtn(
-                          text: "checking",
-                          onClick: () {
-                            bloc.add(CheckingUtillAggregateEvent());
+                        bloc.utilAggr.utilId != 0 &&
+                                bloc.utilAggr.utilStatus!.isAccept &&
+                                bloc.utilAggr.aggStatus!.isAccept
+                            ? Container()
+                            : WhiteBtn(
+                                text: "Tekshirish",
+                                onClick: () {
+                                  bloc.add(CheckingUtillAggregateEvent());
                           },
                         )
                       ],
@@ -195,7 +234,7 @@ class _AggregatePageState extends State<AggregatePage> {
     return Container(
       child: GridView.builder(
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 3,
+          crossAxisCount: 5,
           mainAxisSpacing: dimens.paddingItems,
           crossAxisSpacing: dimens.paddingHeight,
           childAspectRatio: 1.5,
@@ -210,7 +249,6 @@ class _AggregatePageState extends State<AggregatePage> {
             model.packageCount = bloc.cisList[index].packageCount;
             model.packageType = bloc.cisList[index].packageType;
           }
-          print(model.toJson());
           return Container(
             decoration: colorDecoration(
               dimens,
@@ -226,5 +264,14 @@ class _AggregatePageState extends State<AggregatePage> {
         },
       ),
     );
+  }
+
+  Color parseColor(String hexColor) {
+    if (hexColor == "") return MyColor.greys;
+    hexColor = hexColor.toUpperCase().replaceAll('#', '');
+    if (hexColor.length == 6) {
+      hexColor = 'FF$hexColor'; // Alpha qiymatini qo'shish (FF = 100% opacity)
+    }
+    return Color(int.parse('0x$hexColor'));
   }
 }

@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ting/model/base_model.dart';
+import 'package:ting/model/status_model.dart';
 import 'package:ting/model/util_aggregate_response.dart';
 import 'package:ting/model/utilization_aggregation_request.dart';
 import 'package:ting/utils/constanta.dart';
@@ -27,7 +28,7 @@ class AggregateBloc extends Bloc<AggregateEvent, AggregateState> {
       return "Maxsulotni scaner qiling!";
     }
 
-    return "123";
+    return "";
   }
 
   int get cisFullLenght {
@@ -37,12 +38,16 @@ class AggregateBloc extends Bloc<AggregateEvent, AggregateState> {
   var groupModel = CisModel();
   var cisList = <CisModel>[];
 
-  var utilAggr = UtilAggregateResponse();
+  var utilAggr = UtilAggregateResponse(
+    utilStatus: StatusModel(),
+    aggStatus: StatusModel(),
+  );
 
   AggregateBloc() : super(SuccessState()) {
     on<SettingsEvent>(settings);
     on<AddBarcodeEvent>(addEvent);
     on<CheckingUtillAggregateEvent>(checkingUtilAggregate);
+    on<SendUtilizationEvent>(sendUtilization);
   }
 
   bool _isButtonEnabled = true;
@@ -67,6 +72,19 @@ class AggregateBloc extends Bloc<AggregateEvent, AggregateState> {
     });
   }
 
+  sendUtilization(
+      SendUtilizationEvent event, Emitter<AggregateState> emit) async {
+    emit(ProgressState());
+    var baseSend = await send();
+    if (baseSend.code == 200) {
+      utilAggr = baseSend.response as UtilAggregateResponse;
+      emit(SuccessState());
+      return;
+    }
+    emit(ErrorState(failure: ServerFailure(message: baseSend.message)));
+    return;
+  }
+
   FutureOr<void> checkingUtilAggregate(
       CheckingUtillAggregateEvent event, Emitter<AggregateState> emit) async {
     CisRepository repository = CisRepository();
@@ -83,6 +101,11 @@ class AggregateBloc extends Bloc<AggregateEvent, AggregateState> {
   }
 
   addEvent(AddBarcodeEvent event, Emitter<AggregateState> emit) async {
+    print("listen addEvent: ${event.data.barcodeData}");
+    var map = {"cis": event.data.barcodeData};
+    print("11");
+    print(jsonEncode(map));
+    print("112");
     print("listen addEvent: ${event.data.barcodeData}");
     // check group
     if (groupModel.code == "") {
