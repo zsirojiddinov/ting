@@ -4,6 +4,7 @@ class Dimens {
   BuildContext ctx;
   late double screenHeight;
   late double screenWidth;
+  double kf = 0.85;
 
   Dimens(this.ctx) {
     screenHeight = MediaQuery.of(ctx).size.height;
@@ -71,31 +72,31 @@ class Dimens {
   }
 
   double get font12 {
-    return width10 * 1.2;
+    return width10 * 1.2 * kf;
   }
 
   double get font14 {
-    return width10 * 1.4;
+    return width20 * 1.4* kf;
   }
 
   double get font16 {
-    return width20 * 1.6;
+    return width20 * 1.6* kf;
   }
 
   double get font18 {
-    return width20 * 1.8;
+    return width20 * 1.8* kf;
   }
 
   double get font20 {
-    return width20 * 2;
+    return width20 * 2* kf;
   }
 
   double get font24 {
-    return width20 * 2.4;
+    return width20 * 2.4* kf;
   }
 
   double get font30 {
-    return width20 * 3;
+    return width20 * 3* kf;
   }
 
   double get radius10 {

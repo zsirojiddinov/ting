@@ -11,6 +11,7 @@ import 'package:ting/utils/dimens.dart';
 
 import '../../bloc/product/product_bloc.dart';
 import '../../bloc/product/product_event.dart';
+import '../../utils/function.dart';
 import '../widget/deceorations.dart';
 
 class ProductPage extends StatefulWidget {
@@ -47,10 +48,8 @@ class _ProductPageState extends State<ProductPage> {
           return Scaffold(
             appBar: AppBar(
               title: Text(
-                widget.model.partnerName.toString(),
-                style: textStyle.titleStyle.copyWith(
-                  color: MyColor.white,
-                ),
+                "${widget.model.facturaNumber} | ${changeDateFormat(widget.model.facturaDate.toString())}",
+                style: textStyle.titleStyle.copyWith(color: MyColor.white),
               ),
             ),
             body: Stack(
@@ -68,16 +67,14 @@ class _ProductPageState extends State<ProductPage> {
   ui() {
     return bloc.productModel.id == -1
         ? Container()
-        : Container(
-            child: ListView.builder(
-              shrinkWrap: true,
-              primary: true,
-              itemCount: bloc.productModel.products!.length,
-              itemBuilder: (context, index) {
-                var model = bloc.productModel.products![index];
-                return item_product(model);
-              },
-            ),
+        : ListView.builder(
+            shrinkWrap: true,
+            primary: true,
+            itemCount: bloc.productModel.products!.length,
+            itemBuilder: (context, index) {
+              var model = bloc.productModel.products![index];
+              return item_product(model);
+            },
           );
   }
 
@@ -100,29 +97,18 @@ class _ProductPageState extends State<ProductPage> {
         vertical: dimens.height10,
         horizontal: dimens.width20,
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: Row(
         children: [
-          Row(
-            children: [
-              Expanded(
-                child: Text(
-                  model.productName.toString(),
-                  style: textStyle.text_style,
-                ),
-              ),
-            ],
+          Expanded(
+            child: Text(
+              model.productName.toString(),
+              style: textStyle.text_style,
+            ),
           ),
-          Row(
-            children: [
-              Expanded(
-                child: Text(
-                  "${model.cisCount}/${model.productCount}",
-                  style: textStyle.text_style,
-                ),
-              ),
-            ],
-          ),
+          Text(
+            "${model.cisCount}/${model.productCount}",
+            style: textStyle.text_style,
+          )
         ],
       ),
     );
