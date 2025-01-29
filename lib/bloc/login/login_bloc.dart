@@ -24,24 +24,23 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
   }
 
   FutureOr<void> login(SigninEvent event, Emitter<LoginState> emit) async {
-    Get.offAll(HomePage());
-    return;
+/*    Get.offAll(HomePage());
+    return;*/
 
-    var login = loginController.text;
+    var login = loginController.text.toString();
+    var password = passwordController.text.toString();
 
-    if (login.length < 6) {
+    if (login.length < 5) {
       emit(ErrorState(failure: InputLoginFailure()));
       return;
     }
 
-    var password = passwordController.text;
     if (password.isEmpty) {
       emit(ErrorState(failure: InputPasswordFailure()));
       return;
     }
 
     emit(ProgressState());
-    await Future.delayed(const Duration(seconds: 1));
 
     var loginRepository = LoginRepository();
 
@@ -56,6 +55,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       PreferenceService().setFullName(model.full_name!);
       PreferenceService().setPassword(password);
       PreferenceService().setLogin(login);
+      PreferenceService().setRoles(model.roles!);
       loginController.text = "";
       passwordController.text = "";
       Get.offAll(HomePage());

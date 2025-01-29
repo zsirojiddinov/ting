@@ -10,4 +10,5 @@ class IConstanta {
   static const String LOGIN = "myLogin";
   static const String GROUP = "GROUP";
   static const String UNIT = "UNIT";
+  static const String ROLES = "roles";
 }

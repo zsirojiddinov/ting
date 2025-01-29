@@ -16,16 +16,14 @@ class InputLoginFailure extends Failure {
   InputLoginFailure() : super();
 
   @override
-  String getLocalizedMessage(BuildContext context) =>
-      "input_phone_errors";
+  String getLocalizedMessage(BuildContext context) => "input login";
 }
 
 class InputPasswordFailure extends Failure {
   InputPasswordFailure() : super();
 
   @override
-  String getLocalizedMessage(BuildContext context) =>
-      "input_password_errors";
+  String getLocalizedMessage(BuildContext context) => "input password ";
 }
 
 class NotGroupCodeFailure extends Failure {

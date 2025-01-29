@@ -1,5 +1,8 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:ting/model/auth/role_model.dart';
 
 import '../l10n/l10n.dart';
 import '../utils/constanta.dart';
@@ -38,6 +41,7 @@ class PreferenceService {
     _box.write(IConstanta.TOKEN, "");
     _box.write(IConstanta.FULL_NAME, "");
     _box.write(IConstanta.PASSWORD, "");
+    _box.write(IConstanta.LOGIN, "");
   }
 
   setToken(String token) {
@@ -70,5 +74,18 @@ class PreferenceService {
   }
   String getLogin() {
     return _box.read(IConstanta.LOGIN) ?? "";
+  }
+
+  setRoles(List<RoleModel> roles) {
+    List<String> roleListJson =
+        roles.map((role) => jsonEncode(role.toJson())).toList();
+    _box.write(IConstanta.ROLES, roleListJson);
+  }
+
+  List<RoleModel> getRoles() {
+    List<String> roleListJson = _box.read(IConstanta.ROLES) ?? [];
+    return roleListJson
+        .map((json) => RoleModel.fromJson(jsonDecode(json)))
+        .toList();
   }
 }

@@ -84,13 +84,14 @@ class _LoginPageState extends State<LoginPage> {
             padding: EdgeInsets.symmetric(horizontal: dimens.paddingWidth),
             child: ListView(
               children: [
-                Gap(dimens.height20),
-                Gap(dimens.screenWidth / 3),
+                Gap(dimens.screenWidth / 5),
                 logo(dimens, textStyle),
                 Gap(dimens.height20),
-                NewPhoneWidget(
+                NewInputWidget(
                   controller: bloc.loginController,
-                  isActive: bloc.isShowPassword,
+                  isMust: false,
+                  title: "Login",
+                  hint: "input login",
                 ),
                 Gap(dimens.height10),
                 NewPasswordWidget(
@@ -98,17 +99,17 @@ class _LoginPageState extends State<LoginPage> {
                   onClickChangeShow: () {
                     bloc.add(ChangePasswordShowEvent());
                   },
-                  isShow: false,
-                  title: "password",
-                  hint: "password",
+                  isShow: bloc.isShowPassword,
+                  title: "Parol",
+                  hint: "input password",
                 ),
+                Gap(dimens.height20),
                 ArrowBtn(
                   text: "Kirish",
                   onClick: () {
                     bloc.add(SigninEvent());
                   },
                 ),
-                Gap(dimens.height45),
               ],
             ),
           ),

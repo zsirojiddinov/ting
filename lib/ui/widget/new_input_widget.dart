@@ -242,7 +242,6 @@ class NewInputWidget extends StatelessWidget {
             children: [
               Expanded(
                 child: TextField(
-                  obscureText: !isMust,
                   style: textStyle.text_style.copyWith(
                     color: MyColor.black,
                   ),

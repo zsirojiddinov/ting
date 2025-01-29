@@ -48,7 +48,7 @@ class AppStyle {
 
   TextStyle get hintStyle {
     return GoogleFonts.openSans(
-      fontSize: dimens.font12,
+      fontSize: dimens.font16,
       fontWeight: FontWeight.normal,
       color: MyColor.hint_color,
       decoration: TextDecoration.none,

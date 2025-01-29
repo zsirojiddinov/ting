@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:logger/logger.dart';
-
+import 'package:ting/services/preference_service.dart';
 
 class ApiService {
   late final Dio _dio;
@@ -138,6 +138,7 @@ class ApiService {
         return e.response;
       }
       if (e.response?.statusCode == 401) {
+        PreferenceService().logout();
         return e.response;
       }
       if (e.response?.statusCode == 400) {

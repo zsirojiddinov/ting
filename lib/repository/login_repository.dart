@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:ting/model/auth/role_model.dart';
 
 import '../model/auth/login_model.dart';
 import '../model/base_model.dart';
@@ -33,7 +34,7 @@ class LoginRepository {
     Response? response;
     try {
       response = await apiService.getPostData(data, headers, url);
-      if (response?.data['status'] != 200) {
+      if (response?.statusCode != 200) {
         String? message = "";
 
         try {
@@ -48,10 +49,22 @@ class LoginRepository {
           code: response?.statusCode,
           message: message,
         );
+      } else if (response?.data['result'] != 0) {
+        return BaseModel(
+          code: response?.data['result'],
+          message: response?.data['result_message'],
+        );
       } else {
+
+        var loginModel = LoginModel(
+          access_token: response?.data['result_message'] ?? "",
+          roles: response?.data['roles'] != null
+              ? response!.data['roles'].map<RoleModel>((e) => RoleModel.fromJson(e)).toList()
+              : [],
+        );
         return BaseModel(
           code: 200,
-          response: LoginModel.fromJson(response?.data['response']),
+          response: loginModel,
         );
       }
     } on Exception {
