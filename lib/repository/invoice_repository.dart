@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:ting/model/invoice/add_cis_response.dart';
 import 'package:ting/model/invoice/invoice_full_model.dart';
 
 import '../model/base_model.dart';
@@ -88,6 +89,49 @@ class InvoiceRepository {
           return BaseModel(
             code: response.statusCode,
             message: response.data['message'],
+          );
+        }
+      }
+    } on Exception {
+      return SERVER_NOT_WORKING;
+    }
+  }
+
+  Future<BaseModel> add_cis(String factureId, String groupCis) async {
+    var service = PreferenceService();
+    final token = await basicToken();
+    var headers = {
+      'Content-type': 'application/json',
+      'Content': 'application/json',
+      'Accept-Language': service.getLanguage(),
+      'Accept-Encoding': 'UTF-8',
+      'Authorization': '$token',
+    };
+
+    var data = {
+      'facturaId': factureId,
+      'groupCis': groupCis,
+    };
+
+    var url = ApiConstanta.ADD_CIS;
+    Response? response;
+    try {
+      response = await apiService.getPostData(data, headers, url);
+      if (response!.statusCode != 200) {
+        return BaseModel(
+          code: response.statusCode,
+          message: response.data['message'],
+        );
+      } else {
+        if (response.data['result'] == 0) {
+          return BaseModel(
+            code: 200,
+            response: AddCisResponse.fromJson(response.data['response']),
+          );
+        } else {
+          return BaseModel(
+            code: response.data['result'],
+            message: response.data['result_message'],
           );
         }
       }

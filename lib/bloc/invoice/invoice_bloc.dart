@@ -27,7 +27,17 @@ class InvoiceBloc extends Bloc<InvoiceEvent, InvoiceState> {
 
   FutureOr<void> open(
       OpenInvoiceEvent event, Emitter<InvoiceState> emit) async {
-    Get.to(() => ProductPage(model: event.model));
+    await Get.to(() => ProductPage(model: event.model));
+    emit(ProgressState());
+    var repository = InvoiceRepository();
+    var baseResponse = await repository.getInvoices();
+    if (baseResponse.code == 200) {
+      list = baseResponse.response as List<InvoiceModel>;
+      emit(SuccessState());
+      return;
+    }
+
+    emit(ErrorState(failure: ServerFailure(message: baseResponse.message)));
   }
 
   FutureOr<void> getData(

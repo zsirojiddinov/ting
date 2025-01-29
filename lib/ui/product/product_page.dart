@@ -1,3 +1,7 @@
+import 'dart:async';
+
+import 'package:barcode_newland_flutter/newland_scan_result.dart';
+import 'package:barcode_newland_flutter/newland_scanner.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
@@ -7,7 +11,6 @@ import 'package:ting/model/invoice/product_model.dart';
 import 'package:ting/style/colors.dart';
 import 'package:ting/style/text_style.dart';
 import 'package:ting/ui/widget/custom_alert_dialog.dart';
-import 'package:ting/ui/widget/dashed_line.dart';
 import 'package:ting/ui/widget/progressbar.dart';
 import 'package:ting/utils/dimens.dart';
 
@@ -28,6 +31,14 @@ class _ProductPageState extends State<ProductPage> {
   late AppStyle textStyle;
   late Dimens dimens;
   late ProductBloc bloc;
+  late Stream<NewlandScanResult> _stream;
+  late StreamSubscription<NewlandScanResult> _subscription;
+
+  @override
+  void initState() {
+    super.initState();
+    _stream = Newlandscanner.listenForBarcodes;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -46,6 +57,12 @@ class _ProductPageState extends State<ProductPage> {
         },
         builder: (context, state) {
           bloc = BlocProvider.of<ProductBloc>(context);
+
+          _subscription = _stream.listen((data) {
+            _subscription.cancel();
+            bloc.add(AddBarcodeEvent(data));
+          });
+
           return Scaffold(
             appBar: AppBar(
               title: Text(
@@ -70,20 +87,15 @@ class _ProductPageState extends State<ProductPage> {
   ui() {
     return bloc.productModel.id == -1
         ? Container()
-        : Column(
-            children: [
-              Gap(dimens.height10),
-              ListView.builder(
-                shrinkWrap: true,
-                primary: true,
-                itemCount: bloc.productModel.products!.length,
-                itemBuilder: (context, index) {
-                  var model = bloc.productModel.products![index];
-                  return item_product(model);
-                },
-              ),
-            ],
-          );
+        : ListView.builder(
+          shrinkWrap: true,
+          primary: true,
+          itemCount: bloc.productModel.products!.length,
+          itemBuilder: (context, index) {
+            var model = bloc.productModel.products![index];
+            return item_product(model);
+          },
+        );
   }
 
   loading() {
@@ -95,29 +107,30 @@ class _ProductPageState extends State<ProductPage> {
   }
 
   item_product(ProductModel model) {
-    return Column(
-      children: [
-        Container(
-          padding: EdgeInsets.symmetric(
-            horizontal: dimens.width20,
+    return Container(
+      color: model.cisCount == 0
+          ? MyColor.white
+          : model.cisCount! < model.productCount!
+              ? Colors.yellow
+              : MyColor.green_color,
+      padding: EdgeInsets.symmetric(
+        horizontal: dimens.width20,
+        vertical: dimens.height10 / 2,
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: Text(
+              model.productName.toString(),
+              style: textStyle.text_style,
+            ),
           ),
-          child: Row(
-            children: [
-              Expanded(
-                child: Text(
-                  model.productName.toString(),
-                  style: textStyle.text_style,
-                ),
-              ),
-              Text(
-                "${model.cisCount}/${model.productCount}",
-                style: textStyle.text_style,
-              )
-            ],
-          ),
-        ),
-        dashed_line(dimens),
-      ],
+          Text(
+            "${model.cisCount}/${model.productCount}",
+            style: textStyle.text_style,
+          )
+        ],
+      ),
     );
   }
 }
