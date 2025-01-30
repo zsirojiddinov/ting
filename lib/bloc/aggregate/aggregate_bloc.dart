@@ -2,10 +2,10 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:ting/model/base_model.dart';
 import 'package:ting/model/aggregate/status_model.dart';
 import 'package:ting/model/aggregate/util_aggregate_response.dart';
 import 'package:ting/model/aggregate/utilization_aggregation_request.dart';
+import 'package:ting/model/base_model.dart';
 import 'package:ting/utils/constanta.dart';
 import 'package:ting/utils/errors.dart';
 
@@ -21,11 +21,11 @@ class AggregateBloc extends Bloc<AggregateEvent, AggregateState> {
 
   String get showText {
     if (!isHasGroupData) {
-      return "Qutini scaner qiling!";
+      return "📦 Пожалуйста, отсканируйте групповую упаковку.";
     }
 
     if (cisFullLenght != groupModel.packageCount) {
-      return "Maxsulotni scaner qiling!";
+      return "Отсканируйте код маркировки";
     }
 
     return "";
@@ -149,7 +149,7 @@ class AggregateBloc extends Bloc<AggregateEvent, AggregateState> {
 
     var isUnical = isUnitUnical(event.data.barcodeData);
     if (!isUnical) {
-      emit(ErrorState(failure: ServerFailure(message: "takroriy qrcode")));
+      emit(ErrorState(failure: ServerFailure(message: "Этот код маркировки был отсканирован")));
       return;
     }
 
@@ -179,7 +179,7 @@ class AggregateBloc extends Bloc<AggregateEvent, AggregateState> {
     }
 
     if (!isUnitUnical(event.data.barcodeData)) {
-      emit(ErrorState(failure: ServerFailure(message: "takroriy qrcode")));
+      emit(ErrorState(failure: ServerFailure(message: "Этот код маркировки был отсканирован")));
       return;
     }
 

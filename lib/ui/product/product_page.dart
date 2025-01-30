@@ -4,7 +4,6 @@ import 'package:barcode_newland_flutter/newland_scan_result.dart';
 import 'package:barcode_newland_flutter/newland_scanner.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:gap/gap.dart';
 import 'package:ting/bloc/product/product_state.dart';
 import 'package:ting/model/invoice/invoice_model.dart';
 import 'package:ting/model/invoice/product_model.dart';
@@ -58,10 +57,12 @@ class _ProductPageState extends State<ProductPage> {
         builder: (context, state) {
           bloc = BlocProvider.of<ProductBloc>(context);
 
-          _subscription = _stream.listen((data) {
-            _subscription.cancel();
-            bloc.add(AddBarcodeEvent(data));
-          });
+          _subscription = _stream.distinct().take(1).listen(
+            (data) {
+              _subscription.cancel();
+              bloc.add(AddBarcodeEvent(data));
+            },
+          );
 
           return Scaffold(
             appBar: AppBar(

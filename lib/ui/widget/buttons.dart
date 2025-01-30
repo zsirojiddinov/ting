@@ -190,6 +190,7 @@ class WhiteBtn extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+
             Text(
               text,
               style: textStyle.text_style,

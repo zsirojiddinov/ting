@@ -33,7 +33,8 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
 
   addEvent(AddBarcodeEvent event, Emitter<ProductState> emit) async {
     if (productModel.status == 2) {
-      emit(ErrorState(failure: ServerFailure(message: "barchasi yetarli")));
+      emit(ErrorState(
+          failure: ServerFailure(message: "✅ Отгрузка успешно заполнена")));
       return;
     }
 

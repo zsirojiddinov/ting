@@ -1,7 +1,9 @@
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:gap/gap.dart';
 import 'package:ting/bloc/home/home_event.dart';
+import 'package:ting/services/preference_service.dart';
 import 'package:ting/style/colors.dart';
 import 'package:ting/style/text_style.dart';
 import 'package:ting/ui/widget/custom_alert_dialog.dart';
@@ -47,7 +49,12 @@ class _HomePageState extends State<HomePage> {
           return Scaffold(
             appBar: AppBar(
               backgroundColor: MyColor.blue,
-              title: Text("Person name"),
+              title: Text(
+                PreferenceService().getLogin(),
+                style: textStyle.titleStyle.copyWith(
+                  color: MyColor.white,
+                ),
+              ),
               actions: [
                 IconButton(
                   onPressed: () {},
@@ -60,19 +67,10 @@ class _HomePageState extends State<HomePage> {
                 children: [
                   invoice(),
                   aggregate(),
-/*            Center(
-              child: StreamBuilder<NewlandScanResult>(
-                  stream: _stream,
-                  builder: (context, snapshot) {
-                    if (snapshot.hasData) {
-                      final data = snapshot.data!;
-
-                      return Text('Scanned barcode: ${data.barcodeData}', style: textStyle.titleStyle,);
-                    }
-
-                    return const Text('Waiting for Data');
-                  }),
-            ),*/
+                  Expanded(
+                    flex: 3,
+                    child: Container(),
+                  ),
                 ],
               ),
             ),
@@ -96,12 +94,22 @@ class _HomePageState extends State<HomePage> {
             vertical: dimens.height10,
           ),
           margin: EdgeInsets.symmetric(
-            horizontal: dimens.width20,
-            vertical: dimens.height20,
+            horizontal: dimens.width10,
+            vertical: dimens.height10,
           ),
-          child: Text(
-            "Schot factura",
-            style: textStyle.titleStyle,
+          child: Row(
+            children: [
+              Icon(
+                Icons.local_shipping_outlined,
+                color: MyColor.text_color,
+                size: dimens.iconSize24,
+              ),
+              Gap(dimens.width20),
+              Text(
+                "Отгрузка",
+                style: textStyle.titleStyle,
+              ),
+            ],
           ),
         ),
       ),
@@ -122,14 +130,22 @@ class _HomePageState extends State<HomePage> {
             vertical: dimens.height10,
           ),
           margin: EdgeInsets.symmetric(
-            horizontal: dimens.width20,
-            vertical: dimens.height20,
+            horizontal: dimens.width10,
+            vertical: dimens.height10,
           ),
-          child: Center(
-            child: Text(
-              "Agregatsiya",
-              style: textStyle.titleStyle,
-            ),
+          child: Row(
+            children: [
+              Icon(
+                FluentIcons.box_16_regular,
+                color: MyColor.text_color,
+                size: dimens.iconSize24,
+              ),
+              Gap(dimens.width20),
+              Text(
+                "Агрегация",
+                style: textStyle.titleStyle,
+              ),
+            ],
           ),
         ),
       ),

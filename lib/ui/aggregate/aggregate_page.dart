@@ -56,14 +56,16 @@ class _AggregatePageState extends State<AggregatePage> {
         builder: (context, state) {
           bloc = BlocProvider.of<AggregateBloc>(context);
 
-          _subscription = _stream.listen((data) {
-            _subscription.cancel();
+          _subscription = _stream.distinct().take(1).listen(
+            (data) {
+              _subscription.cancel();
             bloc.add(AddBarcodeEvent(data));
-          });
+            },
+          );
           return Scaffold(
               appBar: AppBar(
                 title: Text(
-                  "Agregatsiya",
+                  "Агрегация",
                   style: textStyle.titleStyle.copyWith(
                     color: MyColor.white,
                   ),
@@ -90,99 +92,117 @@ class _AggregatePageState extends State<AggregatePage> {
         child: Column(
           children: [
             groupWidget(),
+            Gap(dimens.height10),
             bloc.isHasGroupData ? cisWidget() : Container(),
             bloc.showText == ""
                 ? Container()
-                : Text(
-                    bloc.showText,
-                    style: textStyle.text_style.copyWith(
-                      color: MyColor.red_color,
-                    ),
+                : Column(
+                    children: [
+                      Gap(dimens.height10),
+                      Text(
+                        bloc.showText,
+                        style: textStyle.text_style.copyWith(
+                          color: MyColor.red_color,
+                        ),
+                      ),
+                    ],
                   ),
             bloc.isHasGroupData && bloc.idFullCisList
                 ? Container(
-                    child: Column(
-                      children: [
-                        bloc.groupModel.packageCount == bloc.cisList.length &&
-                                bloc.utilAggr.utilId == 0
-                            ? WhiteBtn(
-                                text: "Utilizatsiyaga junatish",
+                    child: bloc.groupModel.packageCount ==
+                                bloc.cisList.length &&
+                            bloc.utilAggr.utilId == 0
+                        ? Column(
+                            children: [
+                              Gap(dimens.height20),
+                              WhiteBtn(
+                                text: "Отправить",
                                 onClick: () {
                                   bloc.add(SendUtilizationEvent());
                                 },
-                              )
-                            : Container(),
-                        Container(
-                          decoration: newDecoration(dimens),
-                          alignment: Alignment.center,
-                          width: dimens.screenWidth,
-                          padding: EdgeInsets.symmetric(
-                            horizontal: dimens.width20,
-                            vertical: dimens.height10,
-                          ),
-                          margin: EdgeInsets.symmetric(
-                            vertical: dimens.height10,
-                          ),
-                          child: Row(
-                            children: [
-                              Expanded(
-                                child: Text(
-                                  "Utilization ${bloc.utilAggr.utilStatus?.name}",
-                                  style: textStyle.text_style,
-                                ),
-                              ),
-                              Gap(dimens.width20),
-                              CircleAvatar(
-                                backgroundColor: parseColor(
-                                  bloc.utilAggr.utilStatus!.color!,
-                                ),
-                                radius: dimens.height20,
                               ),
                             ],
-                          ),
-                        ),
-                        Container(
-                          decoration: newDecoration(dimens),
-                          alignment: Alignment.center,
-                          width: dimens.screenWidth,
-                          padding: EdgeInsets.symmetric(
-                            horizontal: dimens.width20,
-                            vertical: dimens.height10,
-                          ),
-                          margin: EdgeInsets.symmetric(
-                            vertical: dimens.height10,
-                          ),
-                          child: Row(
+                          )
+                        : Column(
                             children: [
-                              Expanded(
-                                child: Text(
-                                  "Aggregation ${bloc.utilAggr.aggStatus?.name}",
-                                  style: textStyle.text_style,
+                              Gap(dimens.height20),
+                              Container(
+                                decoration: newDecoration(dimens),
+                                alignment: Alignment.center,
+                                width: dimens.screenWidth,
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: dimens.width20,
+                                  vertical: dimens.height10,
+                                ),
+                                margin: EdgeInsets.symmetric(
+                                  vertical: dimens.height10,
+                                ),
+                                child: Row(
+                                  children: [
+                                    Expanded(
+                                      child: Text(
+                                        "Нанесения (${bloc.utilAggr.utilStatus?.name})",
+                                        style: textStyle.text_style,
+                                      ),
+                                    ),
+                                    Gap(dimens.width20),
+                                    CircleAvatar(
+                                      backgroundColor: parseColor(
+                                        bloc.utilAggr.utilStatus!.color!,
+                                      ),
+                                      radius: dimens.height20,
+                                    ),
+                                  ],
                                 ),
                               ),
-                              Gap(dimens.width20),
-                              CircleAvatar(
-                                backgroundColor: parseColor(
-                                  bloc.utilAggr.utilStatus!.color!,
+                              Container(
+                                decoration: newDecoration(dimens),
+                                alignment: Alignment.center,
+                                width: dimens.screenWidth,
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: dimens.width20,
+                                  vertical: dimens.height10,
                                 ),
-                                radius: dimens.height20,
+                                margin: EdgeInsets.symmetric(
+                                  vertical: dimens.height10,
+                                ),
+                                child: Row(
+                                  children: [
+                                    Expanded(
+                                      child: Text(
+                                        "Агрегация (${bloc.utilAggr.aggStatus?.name})",
+                                        style: textStyle.text_style,
+                                      ),
+                                    ),
+                                    Gap(dimens.width20),
+                                    CircleAvatar(
+                                      backgroundColor: parseColor(
+                                        bloc.utilAggr.aggStatus!.color!,
+                                      ),
+                                      radius: dimens.height20,
+                                    ),
+                                  ],
+                                ),
                               ),
+                              Gap(dimens.height45 * 2),
+                              bloc.utilAggr.aggStatus!.isAccept &&
+                                      bloc.utilAggr.utilStatus!.isAccept
+                                  ? Container(
+                                      child: Text(
+                                        "✅ Агрегация успешно",
+                                        style: textStyle.text_style.copyWith(
+                                          color: MyColor.green,
+                                        ),
+                                      ),
+                                    )
+                                  : WhiteBtn(
+                                      text: "Проверить",
+                                      onClick: () {
+                                        bloc.add(CheckingUtillAggregateEvent());
+                                      },
+                                    )
                             ],
                           ),
-                        ),
-                        Gap(dimens.height45 * 2),
-                        bloc.utilAggr.utilId != 0 &&
-                                bloc.utilAggr.utilStatus!.isAccept &&
-                                bloc.utilAggr.aggStatus!.isAccept
-                            ? Container()
-                            : WhiteBtn(
-                                text: "Tekshirish",
-                                onClick: () {
-                                  bloc.add(CheckingUtillAggregateEvent());
-                          },
-                        )
-                      ],
-                    ),
                   )
                 : Container(),
             //   scanner_result(_stream, textStyle, bloc),
@@ -208,16 +228,16 @@ class _AggregatePageState extends State<AggregatePage> {
           size: dimens.iconSize24,
           color: bloc.isHasGroupData ? MyColor.blue_color : MyColor.greys,
         ),
-        Gap(dimens.width20),
+        Gap(dimens.width10),
         Row(
           children: [
             Text(
-              "Group",
-              style: textStyle.titleStyle.copyWith(
+              "Групповая упаковка",
+              style: textStyle.text_style.copyWith(
                 color: bloc.isHasGroupData ? MyColor.blue_color : MyColor.greys,
               ),
             ),
-            Gap(dimens.width20),
+            Gap(dimens.width10),
             bloc.isHasGroupData
                 ? Text(
                     "${bloc.cisFullLenght}/${bloc.groupModel.packageCount}",
