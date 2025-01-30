@@ -16,7 +16,11 @@ class InvoiceRepository {
     apiService = ApiService(ApiConstanta.BASE_URL_TING);
   }
 
-  Future<BaseModel> getInvoices() async {
+  Future<BaseModel> getInvoices({
+    String startDate = "",
+    String endDate = "",
+    String status = "",
+  }) async {
     var service = PreferenceService();
     final token = await basicToken();
     var headers = {
@@ -28,6 +32,7 @@ class InvoiceRepository {
     };
 
     var url = ApiConstanta.GET_INVOICE_LIST;
+    url = "$url?startDate=$startDate&endDate=$endDate&status=$status";
     Response? response;
     try {
       response = await apiService.getGetData(headers, url);

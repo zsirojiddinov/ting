@@ -378,25 +378,19 @@ class NewBirthdayWidget extends StatelessWidget {
       onTap: () => onCLick(),
       child: Container(
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             title == null
                 ? Container()
-                : Row(
+                : Column(
                     children: [
                       Text(
-                        "birthday",
+                        title!,
                         style: textStyle.text_secondary_style,
                       ),
-                      title == ""
-                          ? Container()
-                          : Icon(
-                              Icons.star_border_purple500_rounded,
-                              color: MyColor.red_color,
-                              size: dimens.iconSize16,
-                            ),
+                      Gap(dimens.height10 / 2),
                     ],
                   ),
-            Gap(dimens.height10 / 2),
             Container(
               padding: EdgeInsets.symmetric(
                 horizontal: dimens.paddingWidth,
@@ -415,8 +409,9 @@ class NewBirthdayWidget extends StatelessWidget {
                       ),
                     ),
                   ),
-                  SvgPicture.asset(
-                    Resource.NEW_IC_SELECTOR,
+                  Icon(
+                    Icons.calendar_month_outlined,
+                    color: MyColor.text_secondary_color,
                   ),
                 ],
               ),
