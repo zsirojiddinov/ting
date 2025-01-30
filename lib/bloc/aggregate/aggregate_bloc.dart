@@ -100,27 +100,20 @@ class AggregateBloc extends Bloc<AggregateEvent, AggregateState> {
     }
   }
 
+  String newCode = "";
+
   addEvent(AddBarcodeEvent event, Emitter<AggregateState> emit) async {
-    print("listen addEvent: ${event.data.barcodeData}");
-    var map = {"cis": event.data.barcodeData};
-    print("11");
-    print(jsonEncode(map));
-    print("112");
-    print("listen addEvent: ${event.data.barcodeData}");
+    if (newCode != "") {
+      return;
+    }
+    newCode = event.data.barcodeData;
+
     // check group
     if (groupModel.code == "") {
       emit(ProgressState());
       BaseModel baseModel = await checkStatus(event.data.barcodeData);
-      print("listen baseModel.code: ${baseModel.code}");
-      print("listen baseModel.message: ${baseModel.message}");
-/*
-      baseModel.code = 200;
-      baseModel.response = CisModel(
-        accept: true,
-        code: event.data.barcodeData,
-        packageCount: 15,
-        packageType: IConstanta.GROUP,
-      );*/
+      newCode = "";
+
       if (baseModel.code != 200) {
         emit(ErrorState(failure: ServerFailure(message: baseModel.message!)));
         return;
@@ -155,16 +148,7 @@ class AggregateBloc extends Bloc<AggregateEvent, AggregateState> {
 
     emit(ProgressState());
     BaseModel baseModel = await checkStatus(event.data.barcodeData);
-    print("listen baseModel.code: ${baseModel.code}");
-    print("listen baseModel.message: ${baseModel.message}");
-
-/*    baseModel.code = 200;
-    baseModel.response = CisModel(
-      accept: true,
-      code: event.data.barcodeData,
-      packageCount: 0,
-      packageType: IConstanta.UNIT,
-    );*/
+    newCode = "";
 
     if (baseModel.code != 200) {
       emit(ErrorState(failure: ServerFailure(message: baseModel.message!)));

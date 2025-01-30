@@ -56,9 +56,10 @@ class _ProductPageState extends State<ProductPage> {
         },
         builder: (context, state) {
           bloc = BlocProvider.of<ProductBloc>(context);
-
-          _subscription = _stream.distinct().take(1).listen(
+          print("Bunyod 1 ${DateTime.now().microsecond}");
+          _subscription = _stream./*distinct().take(1).*/listen(
             (data) {
+              print("Bunyod 2 ${DateTime.now().microsecond}");
               _subscription.cancel();
               bloc.add(AddBarcodeEvent(data));
             },

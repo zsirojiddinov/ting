@@ -31,14 +31,22 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
     emit(ErrorState(failure: ServerFailure(message: baseModel.message)));
   }
 
+  String newCode = "";
   addEvent(AddBarcodeEvent event, Emitter<ProductState> emit) async {
+    if (newCode != "") {
+      return;
+    }
+    newCode = event.data.barcodeData;
+
     if (productModel.status == 2) {
+      newCode = "";
       emit(ErrorState(
           failure: ServerFailure(message: "✅ Отгрузка успешно заполнена")));
       return;
     }
 
     if (event.data.barcodeData == "") {
+      newCode = "";
       emit(ErrorState(failure: ServerFailure(message: "empty")));
       return;
     }
@@ -49,7 +57,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
       productModel.id.toString(),
       event.data.barcodeData,
     );
-
+    newCode = "";
     if (baseResponse.code != 200) {
       emit(
         ErrorState(
