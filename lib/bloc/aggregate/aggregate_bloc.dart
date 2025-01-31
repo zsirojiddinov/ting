@@ -49,28 +49,12 @@ class AggregateBloc extends Bloc<AggregateEvent, AggregateState> {
     on<AddBarcodeEvent>(addEvent);
     on<CheckingUtillAggregateEvent>(checkingUtilAggregate);
     on<SendUtilizationEvent>(sendUtilization);
+    on<TickEvent>(tick); // TickEvent uchun handler qo'shildi
   }
-
-  bool _isButtonEnabled = true;
-  int _secondsLeft = 10;
-  Timer? _timer;
 
   FutureOr<void> settings(
       SettingsEvent event, Emitter<AggregateState> emit) async {
-    _isButtonEnabled = false;
-    _secondsLeft = 10;
-    emit(SuccessState());
 
-    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      if (_secondsLeft > 1) {
-        _secondsLeft--;
-        emit(SuccessState());
-      } else {
-        _isButtonEnabled = true;
-        _timer?.cancel();
-        emit(SuccessState());
-      }
-    });
   }
 
   sendUtilization(
@@ -80,29 +64,12 @@ class AggregateBloc extends Bloc<AggregateEvent, AggregateState> {
     if (baseSend.code == 200) {
       utilAggr = baseSend.response as UtilAggregateResponse;
       emit(SuccessState());
-      startTime(emit);
+      add(CheckingUtillAggregateEvent());
       return;
     }
     await playMusic();
     emit(ErrorState(failure: ServerFailure(message: baseSend.message)));
     return;
-  }
-
-  FutureOr<void> checkingUtilAggregate(
-      CheckingUtillAggregateEvent event, Emitter<AggregateState> emit) async {
-    CisRepository repository = CisRepository();
-    emit(ProgressState());
-    var baseModel =
-        await repository.checkingAggregation(utilAggr.utilId.toString());
-    if (baseModel.code == 200) {
-      utilAggr = baseModel.response as UtilAggregateResponse;
-      startTime(emit);
-      emit(SuccessState());
-      return;
-    } else {
-      await playMusic();
-      emit(ErrorState(failure: ServerFailure(message: baseModel.message)));
-    }
   }
 
   String newCode = "";
@@ -236,21 +203,50 @@ class AggregateBloc extends Bloc<AggregateEvent, AggregateState> {
     return list;
   }
 
-  int timeCount = 30;
+  Timer? _timer;
+  int duration = 30;
 
-  startTime(Emitter<AggregateState> emit) {
-    timeCount = 30;
-    emit(SuccessState());
-   // _timer?.cancel();
+  FutureOr<void> checkingUtilAggregate(
+      CheckingUtillAggregateEvent event, Emitter<AggregateState> emit) async {
+    _timer?.cancel();
+    if (duration == 0) {
+      duration = 30;
+     await checkServerStatus(emit);
+    } // Eski timerni to'xtatamiz
+    // Timer boshlanishi uchun qiymatni tiklaymiz
+    emit(RunningState(duration)); // UI yangilash uchun event chaqiramiz
+
     _timer = Timer.periodic(Duration(seconds: 1), (timer) {
-      if (timeCount == 1) {
-        timeCount = 0;
-        emit(SuccessState());
-        timer.cancel();
+      if (duration > 0) {
+        duration--;
+        add(TickEvent()); // Har soniyada yangi event chaqiramiz
       } else {
-        timeCount--;
-        emit(SuccessState());
+        _timer?.cancel(); // Timer tugaganda to‘xtatamiz
+        // Serverga so‘rov yuborish
       }
     });
+  }
+
+  Future<void> checkServerStatus(Emitter<AggregateState> emit) async {
+    emit(ProgressState());
+
+    CisRepository repository = CisRepository();
+    var baseModel =
+        await repository.checkingAggregation(utilAggr.utilId.toString());
+
+    if (baseModel.code == 200) {
+      utilAggr = baseModel.response as UtilAggregateResponse;
+      emit(SuccessState());
+    } else {
+      await playMusic();
+      emit(ErrorState(failure: ServerFailure(message: baseModel.message)));
+    }
+  }
+
+  // TickEvent handler
+  FutureOr<void> tick(TickEvent event, Emitter<AggregateState> emit) {
+    emit(
+      RunningState(duration),
+    ); // Har safar yangi duration bilan state chiqarish
   }
 }

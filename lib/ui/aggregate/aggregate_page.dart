@@ -62,6 +62,13 @@ class _AggregatePageState extends State<AggregatePage> {
             bloc.add(AddBarcodeEvent(data));
             },
           );
+
+          int timerValue = 30; // Default value
+
+          if (state is RunningState) {
+            timerValue = state
+                .duration; // Agar timer ishlayotgan bo‘lsa, duration-ni ko‘rsatamiz
+          }
           return Scaffold(
               appBar: AppBar(
                 title: Text(
@@ -73,7 +80,7 @@ class _AggregatePageState extends State<AggregatePage> {
               ),
               body: Stack(
                 children: [
-                  ui(),
+                  ui(timerValue),
                   loading(),
                 ],
               ));
@@ -82,7 +89,7 @@ class _AggregatePageState extends State<AggregatePage> {
     );
   }
 
-  ui() {
+  ui(int timerValue) {
     return Container(
       padding: EdgeInsets.symmetric(
         vertical: dimens.height10,
@@ -196,7 +203,9 @@ class _AggregatePageState extends State<AggregatePage> {
                                       ),
                                     )
                                   : WhiteBtn(
-                                      text: "Проверить ${bloc.timeCount}",
+                                      text: timerValue == 0
+                                          ? "Проверить"
+                                          : "Проверить через $timerValue секунд",
                                       onClick: () {
                                         bloc.add(CheckingUtillAggregateEvent());
                                       },

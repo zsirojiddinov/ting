@@ -16,11 +16,8 @@ class ErrorState extends AggregateState {
     required this.failure,
   });
 }
+class RunningState extends AggregateState {
+  final int duration;
 
-/*class AggregateErrorState extends AggregateState {
-  String message;
-
-  AggregateErrorState({
-    required this.message,
-  });
-}*/
+  RunningState(this.duration);
+}

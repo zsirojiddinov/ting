@@ -16,3 +16,5 @@ class AddBarcodeEvent extends AggregateEvent {
 
   AddBarcodeEvent(this.data);
 }
+
+class TickEvent extends AggregateEvent {}
