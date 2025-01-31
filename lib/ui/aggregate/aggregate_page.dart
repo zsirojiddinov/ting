@@ -196,7 +196,7 @@ class _AggregatePageState extends State<AggregatePage> {
                                       ),
                                     )
                                   : WhiteBtn(
-                                      text: "Проверить",
+                                      text: "Проверить ${bloc.timeCount}",
                                       onClick: () {
                                         bloc.add(CheckingUtillAggregateEvent());
                                       },

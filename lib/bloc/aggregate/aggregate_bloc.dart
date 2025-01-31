@@ -79,6 +79,7 @@ class AggregateBloc extends Bloc<AggregateEvent, AggregateState> {
     if (baseSend.code == 200) {
       utilAggr = baseSend.response as UtilAggregateResponse;
       emit(SuccessState());
+      startTime(emit);
       return;
     }
     emit(ErrorState(failure: ServerFailure(message: baseSend.message)));
@@ -93,6 +94,7 @@ class AggregateBloc extends Bloc<AggregateEvent, AggregateState> {
         await repository.checkingAggregation(utilAggr.utilId.toString());
     if (baseModel.code == 200) {
       utilAggr = baseModel.response as UtilAggregateResponse;
+      startTime(emit);
       emit(SuccessState());
       return;
     } else {
@@ -222,5 +224,23 @@ class AggregateBloc extends Bloc<AggregateEvent, AggregateState> {
       list.add(item.code!);
     }
     return list;
+  }
+
+  int timeCount = 30;
+
+  startTime(Emitter<AggregateState> emit) {
+    timeCount = 30;
+    emit(SuccessState());
+   // _timer?.cancel();
+    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
+      if (timeCount == 1) {
+        timeCount = 0;
+        emit(SuccessState());
+        timer.cancel();
+      } else {
+        timeCount--;
+        emit(SuccessState());
+      }
+    });
   }
 }
