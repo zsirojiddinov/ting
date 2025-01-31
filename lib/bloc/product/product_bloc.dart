@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ting/model/invoice/add_cis_response.dart';
 import 'package:ting/model/invoice/invoice_full_model.dart';
@@ -39,14 +40,14 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
     newCode = event.data.barcodeData;
 
     if (productModel.status == 2) {
-      newCode = "";
+      newCode = ""; // await playMusic();
       emit(ErrorState(
           failure: ServerFailure(message: "✅ Отгрузка успешно заполнена")));
       return;
     }
 
     if (event.data.barcodeData == "") {
-      newCode = "";
+      newCode = ""; //await playMusic();
       emit(ErrorState(failure: ServerFailure(message: "empty")));
       return;
     }
@@ -59,6 +60,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
     );
     newCode = "";
     if (baseResponse.code != 200) {
+      await playMusic();
       emit(
         ErrorState(
           failure: ServerFailure(message: baseResponse.message),
@@ -80,4 +82,9 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
       }
     }
   }
+}
+
+playMusic() async {
+  final player = AudioPlayer();
+  await player.play(AssetSource('tit.mp3'));
 }

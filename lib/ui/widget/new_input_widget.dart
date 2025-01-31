@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
 
 import '../../../../../style/colors.dart';
 import '../../../../../style/text_style.dart';
 import '../../../../../utils/dimens.dart';
 import '../../../../../utils/masked.dart';
-import '../../../utils/resource.dart';
 import 'deceorations.dart';
 
 // ignore: must_be_immutable
@@ -399,7 +397,10 @@ class NewBirthdayWidget extends StatelessWidget {
               decoration: newEditDecoration(dimens),
               child: Row(
                 children: [
-                  SvgPicture.asset(Resource.NEW_IC_CALENDAR),
+                  Icon(
+                    Icons.calendar_today_outlined,
+                    color: MyColor.text_secondary_color,
+                  ),
                   Gap(dimens.paddingItems),
                   Expanded(
                     child: Text(
@@ -472,7 +473,10 @@ class NewBirthdayWidget2 extends StatelessWidget {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              SvgPicture.asset(Resource.NEW_IC_CALENDAR),
+              Icon(
+                Icons.calendar_today_outlined,
+                color: MyColor.text_secondary_color,
+              ),
               Gap(dimens.width10),
               Expanded(
                 child: TextField(

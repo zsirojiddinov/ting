@@ -11,6 +11,7 @@ import 'package:ting/utils/errors.dart';
 
 import '../../model/aggregate/cis_model.dart';
 import '../../repository/cis_repository.dart';
+import '../product/product_bloc.dart';
 import 'aggregate_event.dart';
 import 'aggregate_state.dart';
 
@@ -82,6 +83,7 @@ class AggregateBloc extends Bloc<AggregateEvent, AggregateState> {
       startTime(emit);
       return;
     }
+    await playMusic();
     emit(ErrorState(failure: ServerFailure(message: baseSend.message)));
     return;
   }
@@ -98,6 +100,7 @@ class AggregateBloc extends Bloc<AggregateEvent, AggregateState> {
       emit(SuccessState());
       return;
     } else {
+      await playMusic();
       emit(ErrorState(failure: ServerFailure(message: baseModel.message)));
     }
   }
@@ -117,6 +120,7 @@ class AggregateBloc extends Bloc<AggregateEvent, AggregateState> {
       newCode = "";
 
       if (baseModel.code != 200) {
+        await playMusic();
         emit(ErrorState(failure: ServerFailure(message: baseModel.message!)));
         return;
       }
@@ -129,6 +133,7 @@ class AggregateBloc extends Bloc<AggregateEvent, AggregateState> {
         //    emit(SuccessState());
         return;
       } else {
+        await playMusic();
         emit(ErrorState(failure: NotGroupCodeFailure()));
         return;
       }
@@ -137,6 +142,7 @@ class AggregateBloc extends Bloc<AggregateEvent, AggregateState> {
     // check cis
 
     if (cisList.length == groupModel.packageCount) {
+      await playMusic();
       emit(ErrorState(
           failure: ServerFailure(message: "qrcode scaner qilib bo'lmaydi")));
       return;
@@ -144,6 +150,7 @@ class AggregateBloc extends Bloc<AggregateEvent, AggregateState> {
 
     var isUnical = isUnitUnical(event.data.barcodeData);
     if (!isUnical) {
+
       emit(ErrorState(failure: ServerFailure(message: "Этот код маркировки был отсканирован")));
       return;
     }
@@ -153,6 +160,7 @@ class AggregateBloc extends Bloc<AggregateEvent, AggregateState> {
     newCode = "";
 
     if (baseModel.code != 200) {
+      await playMusic();
       emit(ErrorState(failure: ServerFailure(message: baseModel.message!)));
       return;
     }
@@ -160,11 +168,13 @@ class AggregateBloc extends Bloc<AggregateEvent, AggregateState> {
     var cisModel = baseModel.response as CisModel;
 
     if (cisModel.packageType == IConstanta.GROUP) {
+      await playMusic();
       emit(ErrorState(failure: NotUnitCodeFailure()));
       return;
     }
 
     if (!isUnitUnical(event.data.barcodeData)) {
+      await playMusic();
       emit(ErrorState(failure: ServerFailure(message: "Этот код маркировки был отсканирован")));
       return;
     }
