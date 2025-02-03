@@ -117,7 +117,7 @@ class AggregateBloc extends Bloc<AggregateEvent, AggregateState> {
 
     var isUnical = isUnitUnical(event.data.barcodeData);
     if (!isUnical) {
-
+      newCode = "";
       emit(ErrorState(failure: ServerFailure(message: "Этот код маркировки был отсканирован")));
       return;
     }
@@ -158,6 +158,7 @@ class AggregateBloc extends Bloc<AggregateEvent, AggregateState> {
       var baseSend = await send();
       if (baseSend.code == 200) {
         utilAggr = baseSend.response as UtilAggregateResponse;
+        add(CheckingUtillAggregateEvent());
         emit(SuccessState());
         return;
       }
