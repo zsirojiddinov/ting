@@ -1,9 +1,10 @@
 import 'package:dio/dio.dart';
 import 'package:ting/model/aggregate/cis_model.dart';
 
-import '../model/base_model.dart';
 import '../model/aggregate/util_aggregate_response.dart';
 import '../model/aggregate/utilization_aggregation_request.dart';
+import '../model/base_model.dart';
+import '../model/search/search_model.dart';
 import '../services/api_constanta.dart';
 import '../services/api_service.dart';
 import '../services/preference_service.dart';
@@ -40,6 +41,43 @@ class CisRepository {
         return BaseModel(
           code: 200,
           response: CisModel.fromJson(response?.data['response']),
+        );
+      } else {
+        print(response?.data['result']);
+        return BaseModel(
+          code: 1,
+          message: response?.data['result_message'],
+        );
+      }
+    } on Exception {
+      return SERVER_NOT_WORKING;
+    }
+  }
+
+  Future<BaseModel> search(String cis) async {
+    var service = PreferenceService();
+    final token = await basicToken();
+
+    var headers = {
+      'Content-type': 'application/json',
+      'Content': 'application/json',
+      'Accept-Language': service.getLanguage(),
+      'Accept-Encoding': 'UTF-8',
+      'Authorization': '$token',
+    };
+
+    var data = {
+      "cis": cis,
+    };
+
+    var url = ApiConstanta.SEARCH;
+    Response? response;
+    try {
+      response = await apiService.getPostData(data, headers, url);
+      if (response?.statusCode == 200 && response?.data['result'] == 0) {
+        return BaseModel(
+          code: 200,
+          response: SearchModel.fromJson(response?.data['response']),
         );
       } else {
         print(response?.data['result']);

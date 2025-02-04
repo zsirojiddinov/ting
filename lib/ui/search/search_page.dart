@@ -6,13 +6,11 @@ import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
-import 'package:ting/model/aggregate/cis_model.dart';
 import 'package:ting/style/text_style.dart';
-import 'package:ting/ui/widget/buttons.dart';
 import 'package:ting/ui/widget/custom_alert_dialog.dart';
-import 'package:ting/ui/widget/deceorations.dart';
 import 'package:ting/ui/widget/progressbar.dart';
 import 'package:ting/utils/dimens.dart';
+import 'package:ting/utils/function.dart';
 
 import '../../bloc/search/search_bloc.dart';
 import '../../bloc/search/search_event.dart';
@@ -62,159 +60,112 @@ class _SearchPageState extends State<SearchPage> {
               bloc.add(AddBarcodeEvent(data));
             },
           );
-
-          int timerValue = 30; // Default value
-
-          if (state is RunningState) {
-            timerValue = state
-                .duration; // Agar timer ishlayotgan bo‘lsa, duration-ni ko‘rsatamiz
-          }
           return Scaffold(
               appBar: AppBar(
                 title: Text(
-                  "Агрегация",
-                  style: textStyle.titleStyle.copyWith(
-                    color: MyColor.white,
-                  ),
+                "Поиск КМ",
+                style: textStyle.titleStyle.copyWith(
+                  color: MyColor.white,
                 ),
               ),
-              body: Stack(
-                children: [
-                  ui(timerValue),
-                  loading(),
-                ],
-              ));
+/*              actions: [
+                IconButton(
+                  onPressed: () {
+                    bloc.add(ClearDataEvent());
+                  },
+                  icon: Icon(
+                    FluentIcons.delete_12_regular,
+                  ),
+                ),
+              ],*/
+            ),
+            body: Stack(
+              children: [
+                ui(),
+                loading(),
+              ],
+            ),
+          );
         },
       ),
     );
   }
 
-  ui(int timerValue) {
+  ui() {
     return Container(
+      height: dimens.screenHeight,
       padding: EdgeInsets.symmetric(
         vertical: dimens.height10,
         horizontal: dimens.width20,
       ),
       child: SingleChildScrollView(
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            groupWidget(),
-            Gap(dimens.height10),
-            bloc.isHasGroupData ? cisWidget() : Container(),
-            bloc.showText == ""
-                ? Container()
-                : Column(
-                    children: [
-                      Gap(dimens.height10),
-                      Text(
-                        bloc.showText,
-                        style: textStyle.text_style.copyWith(
-                          color: MyColor.red_color,
-                        ),
-                      ),
-                    ],
-                  ),
-            bloc.isHasGroupData && bloc.idFullCisList
+            bloc.isEmpty
                 ? Container(
-                    child: bloc.groupModel.packageCount ==
-                                bloc.cisList.length &&
-                            bloc.utilAggr.utilId == 0
-                        ? Column(
-                            children: [
-                              Gap(dimens.height20),
-                              WhiteBtn(
-                                text: "Отправить",
-                                onClick: () {
-                                  bloc.add(SendUtilizationEvent());
-                                },
-                              ),
-                            ],
-                          )
-                        : Column(
-                            children: [
-                              Gap(dimens.height20),
-                              Container(
-                                decoration: newDecoration(dimens),
-                                alignment: Alignment.center,
-                                width: dimens.screenWidth,
-                                padding: EdgeInsets.symmetric(
-                                  horizontal: dimens.width20,
-                                  vertical: dimens.height10,
-                                ),
-                                margin: EdgeInsets.symmetric(
-                                  vertical: dimens.height10,
-                                ),
-                                child: Row(
-                                  children: [
-                                    Expanded(
-                                      child: Text(
-                                        "Нанесения (${bloc.utilAggr.utilStatus?.name})",
-                                        style: textStyle.text_style,
-                                      ),
-                                    ),
-                                    Gap(dimens.width20),
-                                    CircleAvatar(
-                                      backgroundColor: parseColor(
-                                        bloc.utilAggr.utilStatus!.color!,
-                                      ),
-                                      radius: dimens.height20,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              Container(
-                                decoration: newDecoration(dimens),
-                                alignment: Alignment.center,
-                                width: dimens.screenWidth,
-                                padding: EdgeInsets.symmetric(
-                                  horizontal: dimens.width20,
-                                  vertical: dimens.height10,
-                                ),
-                                margin: EdgeInsets.symmetric(
-                                  vertical: dimens.height10,
-                                ),
-                                child: Row(
-                                  children: [
-                                    Expanded(
-                                      child: Text(
-                                        "Агрегация (${bloc.utilAggr.aggStatus?.name})",
-                                        style: textStyle.text_style,
-                                      ),
-                                    ),
-                                    Gap(dimens.width20),
-                                    CircleAvatar(
-                                      backgroundColor: parseColor(
-                                        bloc.utilAggr.aggStatus!.color!,
-                                      ),
-                                      radius: dimens.height20,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              Gap(dimens.height45 * 2),
-                              bloc.utilAggr.aggStatus!.isAccept &&
-                                      bloc.utilAggr.utilStatus!.isAccept
-                                  ? Container(
-                                      child: Text(
-                                        "✅ Агрегация успешно",
-                                        style: textStyle.text_style.copyWith(
-                                          color: MyColor.green,
-                                        ),
-                                      ),
-                                    )
-                                  : WhiteBtn(
-                                      text: timerValue == 0
-                                          ? "Проверить"
-                                          : "Проверить через $timerValue секунд",
-                                      onClick: () {
-                                        bloc.add(CheckingUtillAggregateEvent());
-                                      },
-                                    )
-                            ],
+                    alignment: Alignment.center,
+                    width: dimens.screenWidth,
+                    height: dimens.screenHeight * 0.8,
+                    child: Center(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.qr_code_scanner_outlined,
+                            size: dimens.iconSize24 * 3,
                           ),
+                          Text(
+                            "❗️Отсканируйте код маркировки",
+                            style: textStyle.titleStyle.copyWith(
+                              color: MyColor.red_color,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ],
+                      ),
+                    ),
                   )
-                : Container(),
-            //   scanner_result(_stream, textStyle, bloc),
+                : Container(
+                    child: Column(
+                      children: [
+                        box_widget(),
+                        item_info(
+                          title: "Статус",
+                          message: bloc.model.statusName.toString(),
+                          //      isHorizontal: true,
+                        ),
+                        item_info(
+                          title: "Агрегация",
+                          message: bloc.model.statusAggregation.toString(),
+                          //     isHorizontal: true,
+                        ),
+                        bloc.isGroupModel
+                            ? item_info(
+                                title: "Количество единиц в упаковке",
+                                message: bloc.model.packageCount.toString(),
+                              )
+                            : Container(),
+                        item_info(
+                          title: "Наименование продукции",
+                          message: bloc.model.productName.toString(),
+                        ),
+                        item_info(
+                          title: "Наименование собственника товара",
+                          message: bloc.model.ownerName.toString(),
+                        ),
+                        item_info(
+                          title: "Дата производства",
+                          message: bloc.model.productionDate.toString(),
+                        ),
+                        item_info(
+                          title: "Дата ввода товара в оборот",
+                          message: bloc.model.producedDate.toString(),
+                        ),
+                      ],
+                    ),
+                  ),
           ],
         ),
       ),
@@ -229,27 +180,29 @@ class _SearchPageState extends State<SearchPage> {
     );
   }
 
-  groupWidget() {
+  box_widget() {
     return Row(
       children: [
         Icon(
-          FluentIcons.box_16_regular,
-          size: dimens.iconSize24,
-          color: bloc.isHasGroupData ? MyColor.blue_color : MyColor.greys,
+          bloc.isGroupModel
+              ? FluentIcons.box_16_regular
+              : FluentIcons.drink_bottle_20_regular,
+          size: dimens.iconSize16 * 2,
+          color: MyColor.blue_color,
         ),
         Gap(dimens.width10),
         Row(
           children: [
             Text(
-              "Групповая упаковка",
+              bloc.isGroupModel ? "Групповая упаковка" : "Единица товара",
               style: textStyle.text_style.copyWith(
-                color: bloc.isHasGroupData ? MyColor.blue_color : MyColor.greys,
+                color: MyColor.blue_color,
               ),
             ),
             Gap(dimens.width10),
-            bloc.isHasGroupData
+            bloc.isEmpty
                 ? Text(
-                    "${bloc.cisFullLenght}/${bloc.groupModel.packageCount}",
+                    "${bloc.model.packageCount}",
                     style: textStyle.titleStyle,
                   )
                 : Container()
@@ -259,48 +212,32 @@ class _SearchPageState extends State<SearchPage> {
     );
   }
 
-  cisWidget() {
+  item_info({
+    required String title,
+    required String message,
+    bool isMessageDateFormat = false,
+  }) {
     return Container(
-      child: GridView.builder(
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 5,
-          mainAxisSpacing: dimens.paddingItems,
-          crossAxisSpacing: dimens.paddingHeight,
-          childAspectRatio: 1.5,
-        ),
-        shrinkWrap: true,
-        primary: false,
-        itemCount: bloc.groupModel.packageCount,
-        itemBuilder: (BuildContext context, int index) {
-          CisModel model = CisModel();
-          if (index < bloc.cisList.length) {
-            model.code = bloc.cisList[index].code;
-            model.packageCount = bloc.cisList[index].packageCount;
-            model.packageType = bloc.cisList[index].packageType;
-          }
-          return Container(
-            decoration: colorDecoration(
-              dimens,
-              isActive: model.code != "",
-            ),
-            child: Icon(
-              FluentIcons.drink_bottle_20_regular,
-              color: model.code == ""
-                  ? MyColor.text_secondary_color
-                  : MyColor.white,
-            ),
-          );
-        },
+      padding: EdgeInsets.symmetric(vertical: dimens.height10),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            title,
+            style: textStyle.text_secondary_style,
+          ),
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  isMessageDateFormat ? changeDateFormat(message) : message,
+                  style: textStyle.text_style_bold,
+                ),
+              ),
+            ],
+          ),
+        ],
       ),
     );
-  }
-
-  Color parseColor(String hexColor) {
-    if (hexColor == "") return MyColor.greys;
-    hexColor = hexColor.toUpperCase().replaceAll('#', '');
-    if (hexColor.length == 6) {
-      hexColor = 'FF$hexColor'; // Alpha qiymatini qo'shish (FF = 100% opacity)
-    }
-    return Color(int.parse('0x$hexColor'));
   }
 }

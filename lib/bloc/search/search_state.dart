@@ -16,8 +16,3 @@ class ErrorState extends SearchState {
     required this.failure,
   });
 }
-class RunningState extends SearchState {
-  final int duration;
-
-  RunningState(this.duration);
-}

@@ -1,75 +1,33 @@
-import 'dart:async';
-import 'dart:convert';
-
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:ting/model/aggregate/status_model.dart';
-import 'package:ting/model/aggregate/util_aggregate_response.dart';
-import 'package:ting/model/aggregate/utilization_aggregation_request.dart';
 import 'package:ting/model/base_model.dart';
 import 'package:ting/utils/constanta.dart';
 import 'package:ting/utils/errors.dart';
 
-import '../../model/aggregate/cis_model.dart';
+import '../../model/search/search_model.dart';
 import '../../repository/cis_repository.dart';
 import '../product/product_bloc.dart';
 import 'search_event.dart';
 import 'search_state.dart';
 
 class SearchBloc extends Bloc<SearchEvent, SearchState> {
-  bool get isHasGroupData {
-    return groupModel.code != "";
+  bool get isEmpty {
+    return model.code == "";
   }
 
-  String get showText {
-    if (!isHasGroupData) {
-      return "📦 Пожалуйста, отсканируйте групповую упаковку.";
-    }
-
-    if (cisFullLenght != groupModel.packageCount) {
-      return "Отсканируйте код маркировки";
-    }
-
-    return "";
+  bool get isGroupModel {
+    return model.packageType == IConstanta.GROUP;
   }
 
-  int get cisFullLenght {
-    return cisList.length;
-  }
-
-  var groupModel = CisModel();
-  var cisList = <CisModel>[];
-
-  var utilAggr = UtilAggregateResponse(
-    utilStatus: StatusModel(),
-    aggStatus: StatusModel(),
-  );
+  var model = SearchModel();
 
   SearchBloc() : super(SuccessState()) {
-    on<SettingsEvent>(settings);
     on<AddBarcodeEvent>(addEvent);
-    on<CheckingUtillAggregateEvent>(checkingUtilAggregate);
-    on<SendUtilizationEvent>(sendUtilization);
-    on<TickEvent>(tick); // TickEvent uchun handler qo'shildi
+    on<ClearDataEvent>(clear);
   }
 
-  FutureOr<void> settings(
-      SettingsEvent event, Emitter<SearchState> emit) async {
-
-  }
-
-  sendUtilization(
-      SendUtilizationEvent event, Emitter<SearchState> emit) async {
-    emit(ProgressState());
-    var baseSend = await send();
-    if (baseSend.code == 200) {
-      utilAggr = baseSend.response as UtilAggregateResponse;
-      emit(SuccessState());
-      add(CheckingUtillAggregateEvent());
-      return;
-    }
-    await playMusic();
-    emit(ErrorState(failure: ServerFailure(message: baseSend.message)));
-    return;
+  clear(ClearDataEvent event, Emitter<SearchState> emit) {
+    model = SearchModel();
+    emit(SuccessState());
   }
 
   String newCode = "";
@@ -80,48 +38,6 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
     }
     newCode = event.data.barcodeData;
 
-    // check group
-    if (groupModel.code == "") {
-      emit(ProgressState());
-      BaseModel baseModel = await checkStatus(event.data.barcodeData);
-      newCode = "";
-
-      if (baseModel.code != 200) {
-        await playMusic();
-        emit(ErrorState(failure: ServerFailure(message: baseModel.message!)));
-        return;
-      }
-      var cisModel = baseModel.response as CisModel;
-      if (cisModel.packageType == IConstanta.GROUP) {
-        groupModel = cisModel;
-        groupModel.code = event.data.barcodeData;
-        emit(SuccessState());
-        //   await createCisList();
-        //    emit(SuccessState());
-        return;
-      } else {
-        await playMusic();
-        emit(ErrorState(failure: NotGroupCodeFailure()));
-        return;
-      }
-    }
-
-    // check cis
-
-    if (cisList.length == groupModel.packageCount) {
-      await playMusic();
-      emit(ErrorState(
-          failure: ServerFailure(message: "Сканер QR-кода недоступен.")));
-      return;
-    }
-
-    var isUnical = isUnitUnical(event.data.barcodeData);
-    if (!isUnical) {
-      newCode = "";
-      emit(ErrorState(failure: ServerFailure(message: "Этот код маркировки был отсканирован")));
-      return;
-    }
-
     emit(ProgressState());
     BaseModel baseModel = await checkStatus(event.data.barcodeData);
     newCode = "";
@@ -131,123 +47,16 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
       emit(ErrorState(failure: ServerFailure(message: baseModel.message!)));
       return;
     }
-
-    var cisModel = baseModel.response as CisModel;
-
-    if (cisModel.packageType == IConstanta.GROUP) {
-      await playMusic();
-      emit(ErrorState(failure: NotUnitCodeFailure()));
-      return;
-    }
-
-    if (!isUnitUnical(event.data.barcodeData)) {
-      await playMusic();
-      emit(ErrorState(failure: ServerFailure(message: "Этот код маркировки был отсканирован")));
-      return;
-    }
-
-    cisModel.code = event.data.barcodeData;
-    cisList.add(cisModel);
+    model = baseModel.response as SearchModel;
+    model.code = event.data.barcodeData;
     emit(SuccessState());
-
-    for (var item in cisList) {
-      print(json.encode(item.toJson()));
-    }
-    if (cisList.length == groupModel.packageCount) {
-      emit(ProgressState());
-      var baseSend = await send();
-      if (baseSend.code == 200) {
-        utilAggr = baseSend.response as UtilAggregateResponse;
-        add(CheckingUtillAggregateEvent());
-        emit(SuccessState());
-        return;
-      }
-      emit(ErrorState(failure: ServerFailure(message: baseSend.message)));
-      return;
-    }
-  }
-
-  bool get idFullCisList {
-    return cisList.length == groupModel.packageCount;
+    return;
   }
 
   checkStatus(String barcode) async {
     var repository = CisRepository();
-    print("listen checkStatus $barcode");
-    var baseModel = await repository.cisStatus(barcode);
+    var baseModel = await repository.search(barcode);
     return baseModel;
   }
 
-  bool isUnitUnical(String code) {
-    for (var item in cisList) {
-      if (item.code == code) {
-        return false;
-      }
-    }
-    return true;
-  }
-
-  Future<BaseModel> send() async {
-    CisRepository repository = CisRepository();
-    var request = UtilizationAggregationRequest();
-    request.groupCis = groupModel.code;
-    request.unitCis = getCisList();
-    var baseModel = await repository.sendUtilAggregation(request);
-    return baseModel;
-  }
-
-  List<String> getCisList() {
-    var list = <String>[];
-    for (var item in cisList) {
-      list.add(item.code!);
-    }
-    return list;
-  }
-
-  Timer? _timer;
-  int duration = 30;
-
-  FutureOr<void> checkingUtilAggregate(
-      CheckingUtillAggregateEvent event, Emitter<SearchState> emit) async {
-    _timer?.cancel();
-    if (duration == 0) {
-      duration = 30;
-     await checkServerStatus(emit);
-    } // Eski timerni to'xtatamiz
-    // Timer boshlanishi uchun qiymatni tiklaymiz
-    emit(RunningState(duration)); // UI yangilash uchun event chaqiramiz
-
-    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
-      if (duration > 0) {
-        duration--;
-        add(TickEvent()); // Har soniyada yangi event chaqiramiz
-      } else {
-        _timer?.cancel(); // Timer tugaganda to‘xtatamiz
-        // Serverga so‘rov yuborish
-      }
-    });
-  }
-
-  Future<void> checkServerStatus(Emitter<SearchState> emit) async {
-    emit(ProgressState());
-
-    CisRepository repository = CisRepository();
-    var baseModel =
-        await repository.checkingAggregation(utilAggr.utilId.toString());
-
-    if (baseModel.code == 200) {
-      utilAggr = baseModel.response as UtilAggregateResponse;
-      emit(SuccessState());
-    } else {
-      await playMusic();
-      emit(ErrorState(failure: ServerFailure(message: baseModel.message)));
-    }
-  }
-
-  // TickEvent handler
-  FutureOr<void> tick(TickEvent event, Emitter<SearchState> emit) {
-    emit(
-      RunningState(duration),
-    ); // Har safar yangi duration bilan state chiqarish
-  }
 }
