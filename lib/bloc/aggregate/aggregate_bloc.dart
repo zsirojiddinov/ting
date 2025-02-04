@@ -111,7 +111,7 @@ class AggregateBloc extends Bloc<AggregateEvent, AggregateState> {
     if (cisList.length == groupModel.packageCount) {
       await playMusic();
       emit(ErrorState(
-          failure: ServerFailure(message: "qrcode scaner qilib bo'lmaydi")));
+          failure: ServerFailure(message: "Сканер QR-кода недоступен.")));
       return;
     }
 
