@@ -60,7 +60,9 @@ class _HomePageState extends State<HomePage> {
                   onPressed: () {
                     bloc.add(SearchEvent());
                   },
-                  icon: Icon(FluentIcons.search_12_regular),
+                  icon: Icon(
+                    FluentIcons.search_12_regular,
+                  ),
                 )
               ],
             ),
@@ -69,8 +71,9 @@ class _HomePageState extends State<HomePage> {
                 children: [
                   invoice(),
                   aggregate(),
+                  search(),
                   Expanded(
-                    flex: 3,
+                    flex: 2,
                     child: Container(),
                   ),
                 ],
@@ -145,6 +148,42 @@ class _HomePageState extends State<HomePage> {
               Gap(dimens.width20),
               Text(
                 "Агрегация",
+                style: textStyle.titleStyle,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  search() {
+    return Expanded(
+      flex: 1,
+      child: GestureDetector(
+        onTap: () => bloc.add(SearchEvent()),
+        child: Container(
+          alignment: Alignment.center,
+          width: dimens.screenWidth,
+          decoration: newEditDecoration(dimens),
+          padding: EdgeInsets.symmetric(
+            horizontal: dimens.width20,
+            vertical: dimens.height10,
+          ),
+          margin: EdgeInsets.symmetric(
+            horizontal: dimens.width10,
+            vertical: dimens.height10,
+          ),
+          child: Row(
+            children: [
+              Icon(
+                FluentIcons.search_12_regular,
+                color: MyColor.text_color,
+                size: dimens.iconSize24,
+              ),
+              Gap(dimens.width20),
+              Text(
+                "Поиск КМ",
                 style: textStyle.titleStyle,
               ),
             ],
