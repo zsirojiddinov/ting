@@ -57,8 +57,10 @@ class _HomePageState extends State<HomePage> {
               ),
               actions: [
                 IconButton(
-                  onPressed: () {},
-                  icon: Icon(FluentIcons.settings_16_regular),
+                  onPressed: () {
+                    bloc.add(SearchEvent());
+                  },
+                  icon: Icon(FluentIcons.search_12_regular),
                 )
               ],
             ),

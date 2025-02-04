@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 
 import '../../ui/aggregate/aggregate_page.dart';
 import '../../ui/invoice/invoice_page.dart';
+import '../../ui/search/search_page.dart';
 import 'home_event.dart';
 import 'home_state.dart';
 
@@ -13,6 +14,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     on<SettingsEvent>(settings);
     on<AggregateHomeEvent>(aggregate);
     on<InvoiceHomeEvent>(invoice);
+    on<SearchEvent>(search);
   }
 
   FutureOr<void> settings(SettingsEvent event, Emitter<HomeState> emit) async {
@@ -27,6 +29,11 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
   FutureOr<void> invoice(InvoiceHomeEvent event, Emitter<HomeState> emit) {
     Get.to(() => InvoicePage());
+    emit(SuccessState());
+  }
+
+  FutureOr<void> search(SearchEvent event, Emitter<HomeState> emit) {
+    Get.to(() => SearchPage());
     emit(SuccessState());
   }
 }
