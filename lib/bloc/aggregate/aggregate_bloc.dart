@@ -118,6 +118,7 @@ class AggregateBloc extends Bloc<AggregateEvent, AggregateState> {
     var isUnical = isUnitUnical(event.data.barcodeData);
     if (!isUnical) {
       newCode = "";
+      await playMusic();
       emit(ErrorState(failure: ServerFailure(message: "Этот код маркировки был отсканирован")));
       return;
     }
@@ -150,9 +151,6 @@ class AggregateBloc extends Bloc<AggregateEvent, AggregateState> {
     cisList.add(cisModel);
     emit(SuccessState());
 
-    for (var item in cisList) {
-      print(json.encode(item.toJson()));
-    }
     if (cisList.length == groupModel.packageCount) {
       emit(ProgressState());
       var baseSend = await send();
@@ -162,6 +160,7 @@ class AggregateBloc extends Bloc<AggregateEvent, AggregateState> {
         emit(SuccessState());
         return;
       }
+      await playMusic();
       emit(ErrorState(failure: ServerFailure(message: baseSend.message)));
       return;
     }
@@ -173,7 +172,6 @@ class AggregateBloc extends Bloc<AggregateEvent, AggregateState> {
 
   checkStatus(String barcode) async {
     var repository = CisRepository();
-    print("listen checkStatus $barcode");
     var baseModel = await repository.cisStatus(barcode);
     return baseModel;
   }
