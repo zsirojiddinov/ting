@@ -2,8 +2,10 @@ import 'dart:async';
 
 import 'package:barcode_newland_flutter/newland_scan_result.dart';
 import 'package:barcode_newland_flutter/newland_scanner.dart';
+import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:gap/gap.dart';
 import 'package:ting/bloc/product/product_state.dart';
 import 'package:ting/model/invoice/invoice_model.dart';
 import 'package:ting/model/invoice/product_model.dart';
@@ -127,10 +129,33 @@ class _ProductPageState extends State<ProductPage> {
               style: textStyle.text_style,
             ),
           ),
-          Text(
-            "${model.cisCount}/${model.productCount}\n"
-            "${model.groupCount}/${model.productGroupCount}",
-            style: textStyle.text_style,
+          Column(
+            children: [
+              Row(
+                children: [
+                  Icon(
+                    FluentIcons.drink_bottle_20_regular,
+                  ),
+                  Gap(dimens.width10),
+                  Text(
+                    "${model.cisCount}/${model.productCount}",
+                    style: textStyle.text_style,
+                  ),
+                ],
+              ),
+              Row(
+                children: [
+                  Icon(
+                    FluentIcons.box_16_regular,
+                  ),
+                  Gap(dimens.width10),
+                  Text(
+                    "${model.groupCount}/${model.productGroupCount}",
+                    style: textStyle.text_style,
+                  ),
+                ],
+              ),
+            ],
           )
         ],
       ),
