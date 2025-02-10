@@ -11,3 +11,5 @@ class InvoiceHomeEvent extends HomeEvent {}
 class AggregateHomeEvent extends HomeEvent {}
 
 class SearchEvent extends HomeEvent {}
+
+class LogoutEvent extends HomeEvent {}

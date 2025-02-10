@@ -63,7 +63,15 @@ class _HomePageState extends State<HomePage> {
                   icon: Icon(
                     FluentIcons.search_12_regular,
                   ),
-                )
+                ),
+                IconButton(
+                  onPressed: () {
+                    bloc.add(LogoutEvent());
+                  },
+                  icon: Icon(
+                    Icons.logout_outlined,
+                  ),
+                ),
               ],
             ),
             body: Container(

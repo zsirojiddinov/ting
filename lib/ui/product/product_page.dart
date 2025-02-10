@@ -128,7 +128,8 @@ class _ProductPageState extends State<ProductPage> {
             ),
           ),
           Text(
-            "${model.cisCount}/${model.productCount}",
+            "${model.cisCount}/${model.productCount}\n"
+            "${model.groupCount}/${model.productGroupCount}",
             style: textStyle.text_style,
           )
         ],
