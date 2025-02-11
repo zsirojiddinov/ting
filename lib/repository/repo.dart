@@ -7,7 +7,7 @@ import '../model/base_model.dart';
 final BaseModel SERVER_NOT_WORKING = BaseModel(
   code: -123,
   message:
-      "Ma'lumotlarni to'g'riligiga ishonch xosil qilib, qaytadan urinib ko'ring!",
+      "Проверьте подключение к Интернету и правильность введенной информации и повторите попытку.",
 );
 
 basicToken() async {
