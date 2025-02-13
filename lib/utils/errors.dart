@@ -23,7 +23,7 @@ class InputPasswordFailure extends Failure {
   InputPasswordFailure() : super();
 
   @override
-  String getLocalizedMessage(BuildContext context) => "input password ";
+  String getLocalizedMessage(BuildContext context) => "input password";
 }
 
 class NotGroupCodeFailure extends Failure {

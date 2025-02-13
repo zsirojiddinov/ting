@@ -24,13 +24,11 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
   }
 
   FutureOr<void> login(SigninEvent event, Emitter<LoginState> emit) async {
-/*    Get.offAll(HomePage());
-    return;*/
 
     var login = loginController.text.toString();
     var password = passwordController.text.toString();
 
-    if (login.length < 5) {
+    if (login.isEmpty) {
       emit(ErrorState(failure: InputLoginFailure()));
       return;
     }
