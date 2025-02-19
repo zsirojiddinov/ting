@@ -134,28 +134,29 @@ class _ProductPageState extends State<ProductPage> {
                   ),
                 ),
                 Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     Row(
                       children: [
-                        Icon(
-                          FluentIcons.drink_bottle_20_regular,
-                        ),
-                        Gap(dimens.width10),
                         Text(
                           "${model.cisCount}/${model.productCount}",
                           style: textStyle.text_style,
+                        ),
+                        Gap(dimens.width10),
+                        Icon(
+                          FluentIcons.drink_bottle_20_regular,
                         ),
                       ],
                     ),
                     Row(
                       children: [
-                        Icon(
-                          FluentIcons.box_16_regular,
-                        ),
-                        Gap(dimens.width10),
                         Text(
                           "${model.groupCount}/${model.productGroupCount}",
                           style: textStyle.text_style,
+                        ),
+                        Gap(dimens.width10),
+                        Icon(
+                          FluentIcons.box_16_regular,
                         ),
                       ],
                     ),
