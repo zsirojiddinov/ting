@@ -12,6 +12,7 @@ import 'package:ting/model/invoice/product_model.dart';
 import 'package:ting/style/colors.dart';
 import 'package:ting/style/text_style.dart';
 import 'package:ting/ui/widget/custom_alert_dialog.dart';
+import 'package:ting/ui/widget/dashed_line.dart';
 import 'package:ting/ui/widget/progressbar.dart';
 import 'package:ting/utils/dimens.dart';
 
@@ -117,46 +118,53 @@ class _ProductPageState extends State<ProductPage> {
           : model.cisCount! < model.productCount!
               ? Colors.yellow
               : MyColor.green_color,
-      padding: EdgeInsets.symmetric(
-        horizontal: dimens.width20,
-        vertical: dimens.height10 / 2,
-      ),
-      child: Row(
+      child: Column(
         children: [
-          Expanded(
-            child: Text(
-              model.productName.toString(),
-              style: textStyle.text_style,
+          Container(
+            padding: EdgeInsets.symmetric(
+              horizontal: dimens.width20,
+              vertical: dimens.height10,
+            ),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    model.productName.toString(),
+                    style: textStyle.text_style,
+                  ),
+                ),
+                Column(
+                  children: [
+                    Row(
+                      children: [
+                        Icon(
+                          FluentIcons.drink_bottle_20_regular,
+                        ),
+                        Gap(dimens.width10),
+                        Text(
+                          "${model.cisCount}/${model.productCount}",
+                          style: textStyle.text_style,
+                        ),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        Icon(
+                          FluentIcons.box_16_regular,
+                        ),
+                        Gap(dimens.width10),
+                        Text(
+                          "${model.groupCount}/${model.productGroupCount}",
+                          style: textStyle.text_style,
+                        ),
+                      ],
+                    ),
+                  ],
+                )
+              ],
             ),
           ),
-          Column(
-            children: [
-              Row(
-                children: [
-                  Icon(
-                    FluentIcons.drink_bottle_20_regular,
-                  ),
-                  Gap(dimens.width10),
-                  Text(
-                    "${model.cisCount}/${model.productCount}",
-                    style: textStyle.text_style,
-                  ),
-                ],
-              ),
-              Row(
-                children: [
-                  Icon(
-                    FluentIcons.box_16_regular,
-                  ),
-                  Gap(dimens.width10),
-                  Text(
-                    "${model.groupCount}/${model.productGroupCount}",
-                    style: textStyle.text_style,
-                  ),
-                ],
-              ),
-            ],
-          )
+          dashed_line(dimens),
         ],
       ),
     );
