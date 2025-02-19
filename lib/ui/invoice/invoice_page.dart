@@ -46,7 +46,7 @@ class _InvoicePageState extends State<InvoicePage> {
           return Scaffold(
             appBar: AppBar(
               title: Text(
-                "Invoice",
+                "Отгрузка",
                 style: textStyle.titleStyle.copyWith(
                   color: MyColor.white,
                 ),
